@@ -1,21 +1,24 @@
 const axios = require('axios');
+const findPreview = require('spotify-preview-finder');
 require('dotenv').config();
 
 let accessToken;
 let tokenExpiresAt = 0;
 
 const moodToPlaylist = {
-  0: '6q7wChNuA3t72erCxyDYr7',
-  1: '37i9dQZF1DX4Wsb4d7NKfP',
-  2: '37i9dQZF1DX0eXqYHdgDwI',
-  3: '37i9dQZF1DX0eXqYHdgDwI',
-  4: '4NJTVh0PhiCrHqD1JwJqJy',
-  6: '4NJTVh0PhiCrHqD1JwJqJy',
-  7: '1llkez7kiZtBeOw5UjFlJq',
-  8: '1llkez7kiZtBeOw5UjFlJq',
-  9: '1h90L3LP8kAJ7KGjCV2Xfd',
-  10: '1h90L3LP8kAJ7KGjCV2Xfd'
-};
+    0: '1ctpkuNEQGEH3UflkUi9qq', // Bad | Musicas tristes 2025
+    1: '37i9dQZF1DX0eXqYHdgDwI', // piangere fortissimo
+    2: '37i9dQZF1DWVV27DiNWxkR', // Sad Indie
+    3: '37i9dQZF1DX3YSRoSdA634', // Life Sucks
+    4: '37i9dQZF1DX3csziQj0d5b', // homework vibes
+    5: '4quQa2RBA1PbNMaJGEXvWA', // Music joyeuse
+    6: '1llkez7kiZtBeOw5UjFlJq', // The Ultimate Happy Playlist
+    7: '6mGhgb5BFsmxEWDHMjCQ1S', // Happy Hits!
+    8: '37i9dQZF1DX3rxVfibe1L0', // Mood Booster
+    9: '1h90L3LP8kAJ7KGjCV2Xfd', // Feel Good Happy Hits
+    10: '37i9dQZF1DX7KNKjOK0o75' // Have a Great Day!
+  };
+  
 
 function getPlaylistIdFromMood(mood) {
   const normalizedMood = Math.max(0, Math.min(10, Math.round(mood)));
@@ -23,7 +26,6 @@ function getPlaylistIdFromMood(mood) {
 }
 
 async function getAccessToken() {
-  console.log("🔁 Récupération du token Spotify...");
   const res = await axios.post(
     'https://accounts.spotify.com/api/token',
     new URLSearchParams({ grant_type: 'client_credentials' }),
@@ -36,41 +38,18 @@ async function getAccessToken() {
       }
     }
   );
-
   accessToken = res.data.access_token;
   tokenExpiresAt = Date.now() + res.data.expires_in * 1000;
-  console.log("✅ Nouveau token reçu, il expire à :", new Date(tokenExpiresAt).toLocaleTimeString());
 }
 
 async function getSongFromMood(score) {
   if (!accessToken || Date.now() >= tokenExpiresAt) await getAccessToken();
 
   const mood = Math.max(0, Math.min(10, parseInt(score)));
-  console.log("🎚️ Mood:", mood);
+  const playlistId = getPlaylistIdFromMood(mood);
+  console.log("🎚️ Mood:", mood, "=> Playlist ID:", playlistId);
 
   try {
-    // Mood 5 : Blinding Lights direct
-    if (mood === 5) {
-      const res = await axios.get('https://api.spotify.com/v1/tracks/0VjIjW4GlUZAMYd2vXMi3b', {
-        headers: {
-          Authorization: `Bearer ${accessToken}`
-        }
-      });
-
-      const track = res.data;
-      console.log("🔊 Preview URL (direct):", track.preview_url);
-
-      return {
-        title: track.name,
-        artist: track.artists[0].name,
-        image: track.album.images[0]?.url || null,
-        preview_url: track.preview_url,
-        spotify_url: track.external_urls.spotify
-      };
-    }
-
-    // Autres moods via playlist
-    const playlistId = getPlaylistIdFromMood(mood);
     const res = await axios.get(`https://api.spotify.com/v1/playlists/${playlistId}/tracks`, {
       headers: {
         Authorization: `Bearer ${accessToken}`
@@ -81,23 +60,34 @@ async function getSongFromMood(score) {
     });
 
     const items = res.data.items.map(item => item.track).filter(Boolean);
-    if (!items.length) throw new Error("Aucun morceau trouvé.");
-
     const randomTrack = items[Math.floor(Math.random() * items.length)];
 
-    console.log("🎵 Titre aléatoire:", randomTrack.name);
-    console.log("🔊 Preview URL (playlist):", randomTrack.preview_url);
+    let preview_url = randomTrack.preview_url;
+
+    // 🔍 Tentative de récupération alternative si pas de preview dans l'API
+    if (!preview_url) {
+      const query = `${randomTrack.name} ${randomTrack.artists[0].name}`;
+      try {
+        const result = await findPreview(query, 1);
+        if (result.success && result.results.length > 0) {
+          preview_url = result.results[0].previewUrls[0] ?? null;
+          console.log("🔁 Preview récupérée via preview-finder:", preview_url);
+        }
+      } catch (scrapeError) {
+        console.warn("⚠️ Erreur lors du fallback preview:", scrapeError.message);
+      }
+    }
 
     return {
       title: randomTrack.name,
       artist: randomTrack.artists[0].name,
       image: randomTrack.album.images[0]?.url || null,
-      preview_url: randomTrack.preview_url,
+      preview_url,
       spotify_url: randomTrack.external_urls.spotify
     };
 
   } catch (err) {
-    console.error("❌ Erreur dans getSongFromMood:", err.response?.data || err.message);
+    console.error("❌ Erreur dans getSongFromMood:", err.stack || err.message);
     throw new Error("Erreur lors de la récupération de la musique.");
   }
 }
