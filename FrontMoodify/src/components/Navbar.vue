@@ -39,10 +39,17 @@
     .logo-img {
     height: 30px;
     margin-right: 10px;
-    transition: transform 3s ease;
+    animation: spin 3s linear infinite;
     }
-    .logo-img:hover {
+
+    @keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
         transform: rotate(360deg);
+    }
     }
     .logo span {
     color: #00FF5F;
