@@ -1,25 +1,20 @@
-const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
-const User = require('../models/User');
+const bcrypt = require('bcrypt')
+const User = require('../models/User')
 
-const login = async (req, res) => {
-  const { email, password } = req.body;
+const register = async (req, res) => {
+  const { email, password, username, name, surname, birthdate } = req.body
+
   try {
-    const user = await User.findUserByEmail(email);
-    if (!user || !user.password) {
-      return res.status(400).json({ message: "Email ou mot de passe invalide." });
-    }
+    const existing = await User.findUserByEmail(email)
+    if (existing) return res.status(400).json({ message: 'Email déjà utilisé.' })
 
-    const validPassword = await bcrypt.compare(password, user.password);
-    if (!validPassword) {
-      return res.status(400).json({ message: "Mot de passe incorrect." });
-    }
+    const hashedPassword = await bcrypt.hash(password, 10)
+    const userId = await User.createUser(email, hashedPassword, username, name, surname, birthdate)
 
-    const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: "2h" });
-    res.json({ token, user });
-  } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(201).json({ message: 'Utilisateur créé avec succès', userId })
+  } catch (err) {
+    res.status(500).json({ message: err.message })
   }
-};
+}
 
-module.exports = { login };
+module.exports = { register }
