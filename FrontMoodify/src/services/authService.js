@@ -1,15 +1,14 @@
+// src/services/authService.js
 import axios from 'axios'
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000'
+const API_BASE_URL = 'http://localhost:3000/api' // 🔁 change si tu es en production
 
-// 🔐 Fonction d'inscription
-export const register = async (userData) => {
-  const response = await axios.post(`${API_BASE_URL}/api/auth/register`, userData)
-  return response.data
+export const login = async (credentials) => {
+  const res = await axios.post(`${API_BASE_URL}/auth/login`, credentials)
+  return res.data // ✅ très important pour simplifier la gestion du token
 }
 
-// 🔑 Fonction de connexion
-export const login = async (credentials) => {
-  const response = await axios.post(`${API_BASE_URL}/api/auth/login`, credentials)
-  return response.data
+export const register = async (userData) => {
+  const res = await axios.post(`${API_BASE_URL}/auth/register`, userData)
+  return res.data
 }

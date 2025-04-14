@@ -1,4 +1,4 @@
-const db = require('../db') // Assure-toi que ce fichier existe et fonctionne
+const db = require('../db')
 
 const createUser = (email, password, username, name, surname, birthdate) => {
   return new Promise((resolve, reject) => {
@@ -6,12 +6,15 @@ const createUser = (email, password, username, name, surname, birthdate) => {
       INSERT INTO users (email, password, username, name, surname, birthdate)
       VALUES (?, ?, ?, ?, ?, ?)
     `
-    db.query(sql, [email, password, username, name, surname, birthdate], (err, result) => {
+    const values = [email, password, username, name, surname, birthdate]
+    console.log("🟡 Insertion SQL avec :", values)
+
+    db.query(sql, values, (err, result) => {
       if (err) {
-        console.error("❌ Erreur d'insertion MySQL :", err)
+        console.error("❌ Erreur d'insertion SQL :", err.sqlMessage)
         return reject(err)
       }
-      console.log("✅ Insertion dans MySQL réussie :", result)
+      console.log("✅ Résultat insertion :", result)
       resolve(result.insertId)
     })
   })
@@ -20,9 +23,15 @@ const createUser = (email, password, username, name, surname, birthdate) => {
 const findUserByEmail = (email) => {
   return new Promise((resolve, reject) => {
     const sql = 'SELECT * FROM users WHERE email = ?'
+    console.log("🔍 Requête SQL :", sql, email)
+
     db.query(sql, [email], (err, results) => {
-      if (err) return reject(err)
-      resolve(results[0]) // retourne un seul user
+      if (err) {
+        console.error("❌ Erreur SQL dans findUserByEmail :", err)
+        return reject(err)
+      }
+      console.log("✅ Résultats SQL :", results)
+      resolve(results[0] || null) // sécurité anti-undefined
     })
   })
 }

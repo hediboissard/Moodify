@@ -1,14 +1,9 @@
-const express = require('express');
-const router = express.Router();
+const express = require('express')
+const router = express.Router()
+const { register, login } = require('../controllers/authController')
 
-// Route POST /api/auth/register
-router.post('/register', (req, res) => {
-  const { username, email, password, name, surname, birthdate } = req.body;
+// Routes API :
+router.post('/register', register)
+router.post('/login', login) // 👈 cette ligne ajoute le login
 
-  console.log('Données reçues :', req.body);
-
-  // Ici, tu ajouteras plus tard l'insertion dans ta base de données
-  res.status(201).json({ message: 'Inscription réussie !' });
-});
-
-module.exports = router;
+module.exports = router

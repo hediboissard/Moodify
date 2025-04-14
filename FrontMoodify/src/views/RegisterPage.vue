@@ -66,7 +66,7 @@ const handleRegister = async () => {
       birthdate: '2000-01-01'
     })
     alert("Inscription réussie ! Vous pouvez vous connecter.")
-    router.push('/login')
+    router.push('/')
   } catch (err) {
     alert('Erreur : ' + (err.response?.data?.message || err.message))
   }
