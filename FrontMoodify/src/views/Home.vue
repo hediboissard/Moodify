@@ -2,6 +2,7 @@
     <div class="home">
       <Navbar />
   
+      <!-- Sidebar gauche -->
       <Sidebar :open="showLeftSidebar" side="left" @toggle="showLeftSidebar = !showLeftSidebar">
         <p class="sidebar-title">🎵 Bibliothèques</p>
   
@@ -14,10 +15,21 @@
         </div>
       </Sidebar>
   
+      <!-- Sidebar droite -->
       <Sidebar :open="showRightSidebar" side="right" @toggle="showRightSidebar = !showRightSidebar">
-        <p class="sidebar-title">📊 Stats / Profil</p>
+        <p class="sidebar-title">👥 Friends</p>
+  
+        <div v-for="(friend, i) in friends" :key="i" class="friend-card">
+          <img :src="friend.avatar" class="friend-avatar" alt="avatar" />
+          <div class="friend-info">
+            <h4>{{ friend.username }}</h4>
+            <p class="friend-mood">{{ friend.moodEmoji }} {{ friend.moodText }}</p>
+            <p class="friend-track">🎵 {{ friend.currentTrack }}</p>
+          </div>
+        </div>
       </Sidebar>
   
+      <!-- Mood section -->
       <div class="content-wrapper">
         <div class="sbar">
           <div class="emoji">{{ currentMood.emoji }}</div>
@@ -68,6 +80,31 @@
     const slider = document.querySelector('.slider');
     slider.style.background = currentMood.value.color;
   }
+  
+  // Fake friends list
+  const friends = [
+    {
+      avatar: 'https://i.pravatar.cc/150?img=1',
+      username: 'lil_moody',
+      moodEmoji: '😎',
+      moodText: 'Chill',
+      currentTrack: 'Lo-Fi Vibes'
+    },
+    {
+      avatar: 'https://i.pravatar.cc/150?img=2',
+      username: 'sunny_day',
+      moodEmoji: '😊',
+      moodText: 'Happy',
+      currentTrack: 'Sunshine Beats'
+    },
+    {
+      avatar: 'https://i.pravatar.cc/150?img=3',
+      username: 'deep_mind',
+      moodEmoji: '🧘‍♂️',
+      moodText: 'Calm',
+      currentTrack: 'Zen Flow'
+    }
+  ];
   </script>
   
   <style scoped>
@@ -148,7 +185,7 @@
     font-weight: bold;
   }
   
-  /* Sidebar playlist styles */
+  /* Sidebar styles */
   .sidebar-title {
     font-weight: bold;
     font-size: 1.1rem;
@@ -189,6 +226,35 @@
   
   .track-info p {
     margin: 0;
+    font-size: 0.85rem;
+    color: #aaa;
+  }
+  
+  /* Friend card */
+  .friend-card {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1rem;
+    padding: 0.5rem;
+    background-color: #2a2a2a;
+    border-radius: 8px;
+  }
+  
+  .friend-avatar {
+    width: 45px;
+    height: 45px;
+    object-fit: cover;
+    border-radius: 50%;
+    margin-right: 1rem;
+  }
+  
+  .friend-info h4 {
+    margin: 0;
+    font-size: 1rem;
+  }
+  
+  .friend-info p {
+    margin: 2px 0;
     font-size: 0.85rem;
     color: #aaa;
   }

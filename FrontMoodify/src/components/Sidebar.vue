@@ -44,7 +44,7 @@
   <style scoped>
   .sidebar {
     position: absolute;
-    top: 10vh; /* Laisse la navbar visible */
+    top: 10vh; 
     bottom: 0;
     background-color: #1e1e1e;
     color: white;
@@ -81,19 +81,19 @@
   }
   
   .sidebar.left .arrow {
-    transform: rotate(0deg);
+    transform: rotate(180deg);
   }
   
   .sidebar.left .arrow.flipped {
-    transform: rotate(180deg);
+    transform: rotate(0deg);
   }
   
   .sidebar.right .arrow {
-    transform: rotate(180deg);
+    transform: rotate(0deg);
   }
   
   .sidebar.right .arrow.flipped {
-    transform: rotate(0deg);
+    transform: rotate(180deg);
   }
   
   .sidebar.right .toggle-btn {
