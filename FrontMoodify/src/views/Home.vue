@@ -2,8 +2,33 @@
     <div class="home">
       <Navbar />
   
+      <Sidebar :open="showLeftSidebar" side="left" @toggle="showLeftSidebar = !showLeftSidebar">
+        <p class="sidebar-title">🎵 Bibliothèques</p>
+  
+        <div v-for="i in 5" :key="i" class="track-item">
+          <img src="../assets/logo.png" class="track-cover" alt="cover" />
+          <div class="track-info">
+            <h4>Titre {{ i }}</h4>
+            <p>Artiste Démo</p>
+          </div>
+        </div>
+      </Sidebar>
+  
+      <Sidebar :open="showRightSidebar" side="right" @toggle="showRightSidebar = !showRightSidebar">
+        <p class="sidebar-title">👥 Friends</p>
+  
+        <div v-for="(friend, i) in friends" :key="i" class="friend-card">
+          <img :src="friend.avatar" class="friend-avatar" alt="avatar" />
+          <div class="friend-info">
+            <h4>{{ friend.username }}</h4>
+            <p class="friend-mood">{{ friend.moodEmoji }} {{ friend.moodText }}</p>
+            <p class="friend-track">🎵 {{ friend.currentTrack }}</p>
+          </div>
+        </div>
+      </Sidebar>
+  
       <div class="content-wrapper">
-        <div class="sidebar">
+        <div class="sbar">
           <div class="emoji">{{ currentMood.emoji }}</div>
           <div class="mood-label">Your Mood</div>
           <input
@@ -18,9 +43,8 @@
           <div class="mood-text">{{ currentMood.text }}</div>
         </div>
       </div>
-
+  
       <MusicPlayer />
-
     </div>
   </template>
   
@@ -28,7 +52,10 @@
   import { ref, computed } from 'vue';
   import Navbar from '@/components/Navbar.vue';
   import MusicPlayer from '@/components/MusicPlayer.vue';
-
+  import Sidebar from '@/components/Sidebar.vue';
+  
+  const showLeftSidebar = ref(false);
+  const showRightSidebar = ref(false);
   
   const sliderValue = ref(0);
   
@@ -50,6 +77,30 @@
     const slider = document.querySelector('.slider');
     slider.style.background = currentMood.value.color;
   }
+  
+  const friends = [
+    {
+      avatar: 'https://i.pravatar.cc/150?img=1',
+      username: 'lil_moody',
+      moodEmoji: '😎',
+      moodText: 'Chill',
+      currentTrack: 'Lo-Fi Vibes'
+    },
+    {
+      avatar: 'https://i.pravatar.cc/150?img=2',
+      username: 'sunny_day',
+      moodEmoji: '😊',
+      moodText: 'Happy',
+      currentTrack: 'Sunshine Beats'
+    },
+    {
+      avatar: 'https://i.pravatar.cc/150?img=3',
+      username: 'deep_mind',
+      moodEmoji: '🧘‍♂️',
+      moodText: 'Calm',
+      currentTrack: 'Zen Flow'
+    }
+  ];
   </script>
   
   <style scoped>
@@ -59,6 +110,7 @@
     min-height: 100vh;
     display: flex;
     flex-direction: column;
+    position: relative;
   }
   
   .content-wrapper {
@@ -69,7 +121,7 @@
     height: 90vh;
   }
   
-  .sidebar {
+  .sbar {
     width: 90%;
     height: 50vh;
     padding: 30px;
@@ -127,6 +179,78 @@
     margin-top: 20px;
     font-size: 18px;
     font-weight: bold;
+  }
+  
+  .sidebar-title {
+    font-weight: bold;
+    font-size: 1.1rem;
+    margin-bottom: 1rem;
+  }
+  
+  .track-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1rem;
+    padding: 0.5rem;
+    border-radius: 8px;
+    background-color: #2a2a2a;
+    transition: background 0.2s ease;
+  }
+  
+  .track-item:hover {
+    background-color: #333;
+  }
+  
+  .track-cover {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    border-radius: 6px;
+    margin-right: 1rem;
+  }
+  
+  .track-info {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .track-info h4 {
+    margin: 0;
+    font-size: 1rem;
+  }
+  
+  .track-info p {
+    margin: 0;
+    font-size: 0.85rem;
+    color: #aaa;
+  }
+  
+  .friend-card {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1rem;
+    padding: 0.5rem;
+    background-color: #2a2a2a;
+    border-radius: 8px;
+  }
+  
+  .friend-avatar {
+    width: 45px;
+    height: 45px;
+    object-fit: cover;
+    border-radius: 50%;
+    margin-right: 1rem;
+  }
+  
+  .friend-info h4 {
+    margin: 0;
+    font-size: 1rem;
+  }
+  
+  .friend-info p {
+    margin: 2px 0;
+    font-size: 0.85rem;
+    color: #aaa;
   }
   </style>
   
