@@ -52,7 +52,7 @@
     background-color: #444;
     color: white;
     width: 100%;
-    max-width: 300px;
+    max-width: 500px;
   }
   
   .links {
