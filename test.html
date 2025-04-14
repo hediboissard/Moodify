@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Mood Slider</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: sans-serif;
+      background: #121212;
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .sidebar {
+      width: 250px;
+      padding: 20px;
+      background-color: #1e1e1e;
+      border-radius: 10px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .emoji {
+      font-size: 40px;
+      margin-bottom: 10px;
+    }
+
+    .mood-label {
+      margin: 20px 0 10px;
+      font-size: 18px;
+    }
+
+    .slider {
+      width: 100%;
+      -webkit-appearance: none;
+      appearance: none;
+      height: 8px;
+      border-radius: 5px;
+      outline: none;
+      background: #00ff88; 
+      transition: background 0.3s;
+    }
+
+    .slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: white;
+      cursor: pointer;
+      border: 2px solid #fff;
+    }
+
+    .slider::-moz-range-thumb {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: white;
+      cursor: pointer;
+      border: 2px solid #fff;
+    }
+
+    .mood-text {
+      margin-top: 10px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="sidebar">
+    <div class="emoji" id="emoji">😄</div>
+    <div class="mood-label">Your Mood</div>
+    <input type="range" min="0" max="1" step="0.01" value="0" class="slider" id="moodSlider">
+    <div class="mood-text" id="moodText">Happy</div>
+  </div>
+
+  <script>
+    const slider = document.getElementById("moodSlider");
+    const moodText = document.getElementById("moodText");
+    const emoji = document.getElementById("emoji");
+
+    const moods = [
+      { text: "Happy", emoji: "😄", color: "#00ff88" },
+      { text: "Excited", emoji: "😁", color: "#66ff66" },
+      { text: "Calm", emoji: "😌", color: "#ffff66" },
+      { text: "Meh", emoji: "😐", color: "#ffcc66" },
+      { text: "Tired", emoji: "🥱", color: "#ff8844" },
+      { text: "Sad", emoji: "😢", color: "#ff4444" }
+    ];
+
+    function updateMood(value) {
+      const index = Math.floor(value * (moods.length - 1));
+      const mood = moods[index];
+      moodText.textContent = mood.text;
+      emoji.textContent = mood.emoji;
+      slider.style.background = mood.color;
+      console.log("Mood selected:", mood.text);
+    }
+
+    updateMood(parseFloat(slider.value));
+
+    slider.addEventListener("input", () => {
+      updateMood(parseFloat(slider.value));
+    });
+  </script>
+
+</body>
+</html>
