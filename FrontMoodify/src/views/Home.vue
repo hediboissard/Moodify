@@ -86,7 +86,6 @@ function updateMood() {
   slider.style.background = currentMood.value.color;
 }
 
-// Musique liée à l'humeur
 const moodTracks = {
   Happy: { title: "Uplift Me", artist: "Joy Beats", cover: "../assets/logo.png" },
   Excited: { title: "Hype Time", artist: "Pump Squad", cover: "../assets/logo.png" },
@@ -98,7 +97,6 @@ const moodTracks = {
 
 const currentTrackByMood = computed(() => moodTracks[currentMood.value.text]);
 
-// Friends list
 const friends = [
   {
     avatar: 'https://i.pravatar.cc/150?img=1',
