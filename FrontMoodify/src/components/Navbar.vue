@@ -1,6 +1,6 @@
 <template>
     <nav class="navbar">
-        <router-link to="/" class="logo">
+        <router-link to="/home" class="logo">
             <img src="@/assets/logo.png" alt="Logo" class="logo-img" />
             <span>Moodify</span>
         </router-link>
