@@ -53,6 +53,7 @@
   import Navbar from '@/components/Navbar.vue';
   import MusicPlayer from '@/components/MusicPlayer.vue';
   import Sidebar from '@/components/Sidebar.vue';
+
   
   const showLeftSidebar = ref(false);
   const showRightSidebar = ref(false);

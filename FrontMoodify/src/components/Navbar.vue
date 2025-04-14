@@ -10,12 +10,19 @@
   
       <div class="links">
         <router-link to="/about">À propos</router-link>
-        <button>Profil</button>
+        <button @click="goToProfil">Profil</button>
       </div>
     </nav>
   </template>
   
   <script setup>
+  import { useRouter } from 'vue-router'
+  const router = useRouter()
+  
+  function goToProfil() {
+    router.push('/profil')
+  }
+  
   </script>
   
   <style scoped>
