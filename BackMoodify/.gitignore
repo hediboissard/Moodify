@@ -10,6 +10,7 @@ yarn-error.log*
 
 # Environnement
 .env
+.env.local
 
 # Système
 .DS_Store
