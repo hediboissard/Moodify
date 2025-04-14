@@ -78,11 +78,11 @@
   }
   
   .links button {
-    background-color: #007bff;
+    background-color: #75fb75;
     border: none;
     padding: 0.5rem 1rem;
     border-radius: 4px;
-    color: white;
+    color: #1b1b1b;
     cursor: pointer;
   }
   </style>

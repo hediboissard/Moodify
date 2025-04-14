@@ -143,17 +143,16 @@ const friends = [
 }
 
 .sbar {
+  border: solid 4px #1e1e1e;
   width: 80%;
   margin: 30px 10px;
   height: 50vh;
   padding: 30px;
-  background-color: #1e1e1e;
   border-radius: 15px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
 }
 
 .emoji {
