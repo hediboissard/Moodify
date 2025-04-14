@@ -3,7 +3,7 @@
     <div class="text-center text-green-500 space-y-5" style="background-color: var(--gray-main); padding: 40px; border-radius: 10px;">
       <div class="flex items-center justify-center space-x-4">
         <img src="@/assets/logo.png" alt="Logo" class="logo h-16 w-16" />
-        <h1 class="text-3xl font-bold text-green-500">Moodify</h1>
+        <h1 class="text-5xl font-bold text-green-500">Moodify</h1>
       </div>
 
 
