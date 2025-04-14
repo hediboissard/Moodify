@@ -39,6 +39,10 @@
     .logo-img {
     height: 30px;
     margin-right: 10px;
+    transition: transform 3s ease;
+    }
+    .logo-img:hover {
+        transform: rotate(360deg);
     }
     .logo span {
     color: #00FF5F;

@@ -2,7 +2,6 @@
     <div class="home">
       <Navbar />
   
-      <!-- Sidebar gauche -->
       <Sidebar :open="showLeftSidebar" side="left" @toggle="showLeftSidebar = !showLeftSidebar">
         <p class="sidebar-title">🎵 Bibliothèques</p>
   
@@ -15,7 +14,6 @@
         </div>
       </Sidebar>
   
-      <!-- Sidebar droite -->
       <Sidebar :open="showRightSidebar" side="right" @toggle="showRightSidebar = !showRightSidebar">
         <p class="sidebar-title">👥 Friends</p>
   
@@ -29,7 +27,6 @@
         </div>
       </Sidebar>
   
-      <!-- Mood section -->
       <div class="content-wrapper">
         <div class="sbar">
           <div class="emoji">{{ currentMood.emoji }}</div>
@@ -81,7 +78,6 @@
     slider.style.background = currentMood.value.color;
   }
   
-  // Fake friends list
   const friends = [
     {
       avatar: 'https://i.pravatar.cc/150?img=1',
@@ -185,7 +181,6 @@
     font-weight: bold;
   }
   
-  /* Sidebar styles */
   .sidebar-title {
     font-weight: bold;
     font-size: 1.1rem;
@@ -230,7 +225,6 @@
     color: #aaa;
   }
   
-  /* Friend card */
   .friend-card {
     display: flex;
     align-items: center;
