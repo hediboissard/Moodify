@@ -1,9 +1,9 @@
 <template>
   <div class="min-h-screen flex items-center justify-center" style="background-color: var(--black-main)">
-    <div class="text-center text-green-500 space-y-5" style="background-color: var(--gray-main); padding: 40px; border-radius: 10px;">
+    <div class="text-center w-[600px] text-green-500 space-y-5" style="background-color: var(--gray-main); padding: 40px; border-radius: 10px;">
       <div class="flex items-center justify-center space-x-4">
         <img src="@/assets/logo.png" alt="Logo" class="logo h-16 w-16" />
-        <h1 class="text-5xl font-bold text-green-500">Moodify</h1>
+        <h1 class="text-5xl font-bold text-green-500" id="moodify">Moodify</h1>
       </div>
 
 
@@ -33,18 +33,18 @@
         v-model="emailOrUsername"
         type="text"
         placeholder="Username"
-        class="w-full border border-green-500 rounded-lg py-2 px-4 bg-CustomBlack text-green-500 placeholder-green-500 focus:outline-none focus:ring-2 focus:ring-green-600"
+        class="w-full border border-green-500 rounded-lg py-2 px-4 bg-CustomBlack text-white placeholder-green-500 focus:outline-none focus:ring-2 focus:ring-green-600"
       />
       <input
         type="text"
         placeholder="Email"
-        class="w-full border border-green-500 rounded-lg py-2 px-4 bg-CustomBlack text-green-500 placeholder-green-500 focus:outline-none focus:ring-2 focus:ring-green-600"
+        class="w-full border border-green-500 rounded-lg py-2 px-4 bg-CustomBlack text-white placeholder-green-500 focus:outline-none focus:ring-2 focus:ring-green-600"
       />
       <input
         v-model="password"
         type="password"
         placeholder="Password"
-        class="w-full border border-green-500 rounded-lg py-2 px-4 bg-CustomBlack text-green-500 placeholder-green-500 focus:outline-none focus:ring-2 focus:ring-green-600"
+        class="w-full border border-green-500 rounded-lg py-2 px-4 bg-CustomBlack text-white placeholder-green-500 focus:outline-none focus:ring-2 focus:ring-green-600"
       />
 
       <button
