@@ -1,6 +1,6 @@
 <template>
     <Navbar />
-    <div class="min-h-screen bg-neutral-900 text-white flex flex-col items-center">
+    <div class=" bg-neutral-900 text-white flex flex-col items-center">
   
       <div class="mt-12">
         <img src="https://www.svgrepo.com/show/382106/profile-avatar.svg"
