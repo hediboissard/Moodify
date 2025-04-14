@@ -1,6 +1,10 @@
 <template>
     <nav class="navbar">
-      <router-link to="/" class="logo">MonLogo</router-link>
+        <router-link to="/" class="logo">
+            <img src="@/assets/logo.png" alt="Logo" class="logo-img" />
+            <span>Moodify</span>
+        </router-link>
+
   
       <input type="text" placeholder="Rechercher..." class="search-input" />
   
@@ -15,20 +19,31 @@
   </script>
   
   <style scoped>
-  .navbar {
-    background-color: #2c2c2c;
-    padding: 1rem 2rem;
+    .navbar {
+        background-color: #2c2c2c;
+        padding: 1rem 2rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+    
+    .logo {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-  }
-  
-  .logo {
-    font-weight: bold;
-    font-size: 1.2rem;
-    color: white;
     text-decoration: none;
-  }
+    color: white;
+    font-size: 1.2rem;
+    font-weight: bold;
+    }
+
+    .logo-img {
+    height: 30px;
+    margin-right: 10px;
+    }
+    .logo span {
+    color: #00FF5F;
+    }
+
   
   .search-input {
     padding: 0.5rem;
