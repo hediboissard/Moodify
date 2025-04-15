@@ -4,7 +4,6 @@
 
     <Sidebar :open="showLeftSidebar" side="left" @toggle="showLeftSidebar = !showLeftSidebar">
       <p class="sidebar-title">🎵 Bibliothèques</p>
-
       <div v-for="i in 5" :key="i" class="track-item">
         <img src="../assets/logo.png" class="track-cover" alt="cover" />
         <div class="track-info">
@@ -16,7 +15,6 @@
 
     <Sidebar :open="showRightSidebar" side="right" @toggle="showRightSidebar = !showRightSidebar">
       <p class="sidebar-title">👥 Friends</p>
-
       <div v-for="(friend, i) in friends" :key="i" class="friend-card">
         <img :src="friend.avatar" class="friend-avatar" alt="avatar" />
         <div class="friend-info">
@@ -38,21 +36,27 @@
           step="0.01"
           v-model="sliderValue"
           class="slider"
-          @input="updateMood"
+          @change="onSliderChange"
         />
         <div class="mood-text">{{ currentMood.text }}</div>
       </div>
 
-      <div class="mood-track">
-        <img :src="currentTrackByMood.cover" alt="cover" class="mood-cover" />
+      <div class="mood-track" v-if="currentSong">
+        <img :src="currentSong.image" alt="cover" class="mood-cover" />
         <div class="track-meta">
-          <h3>{{ currentTrackByMood.title }}</h3>
-          <p>{{ currentTrackByMood.artist }}</p>
+          <h3>{{ currentSong.title }}</h3>
+          <p>{{ currentSong.artist }}</p>
         </div>
       </div>
     </div>
 
-    <MusicPlayer />
+    <MusicPlayer
+      :track="currentSong"
+      :onPrev="playPrevious"
+      :onNext="playNext"
+    />
+
+
   </div>
 </template>
 
@@ -64,8 +68,8 @@ import Sidebar from '@/components/Sidebar.vue';
 
 const showLeftSidebar = ref(false);
 const showRightSidebar = ref(false);
-
 const sliderValue = ref(0);
+const currentSong = ref(null);
 
 const moods = [
   { text: "Happy", emoji: "😊", color: "#00ff88" },
@@ -81,45 +85,31 @@ const currentMood = computed(() => {
   return moods[index];
 });
 
-function updateMood() {
-  const slider = document.querySelector('.slider');
-  slider.style.background = currentMood.value.color;
+function onSliderChange() {
+  updateSliderColor();
+  fetchSongByMood();
 }
 
-const moodTracks = {
-  Happy: { title: "Uplift Me", artist: "Joy Beats", cover: "../assets/logo.png" },
-  Excited: { title: "Hype Time", artist: "Pump Squad", cover: "../assets/logo.png" },
-  Calm: { title: "Serenity", artist: "Ocean Flow", cover: "../assets/logo.png" },
-  Meh: { title: "Neutral Ground", artist: "LoLine", cover: "../assets/logo.png" },
-  Tired: { title: "Slow Mode", artist: "Dreamcore", cover: "../assets/logo.png" },
-  Sad: { title: "Rainy Soul", artist: "DeepEcho", cover: "../assets/logo.png" }
-};
-
-const currentTrackByMood = computed(() => moodTracks[currentMood.value.text]);
-
-const friends = [
-  {
-    avatar: 'https://i.pravatar.cc/150?img=1',
-    username: 'lil_moody',
-    moodEmoji: '😎',
-    moodText: 'Chill',
-    currentTrack: 'Lo-Fi Vibes'
-  },
-  {
-    avatar: 'https://i.pravatar.cc/150?img=2',
-    username: 'sunny_day',
-    moodEmoji: '😊',
-    moodText: 'Happy',
-    currentTrack: 'Sunshine Beats'
-  },
-  {
-    avatar: 'https://i.pravatar.cc/150?img=3',
-    username: 'deep_mind',
-    moodEmoji: '🧘‍♂️',
-    moodText: 'Calm',
-    currentTrack: 'Zen Flow'
+function updateSliderColor() {
+  const slider = document.querySelector('.slider');
+  if (slider) {
+    slider.style.background = currentMood.value.color;
   }
-];
+}
+
+function sliderToMoodLevel() {
+  return Math.floor(sliderValue.value * 9) + 1;
+}
+
+async function fetchSongByMood() {
+  try {
+    const level = sliderToMoodLevel();
+    const res = await fetch(`http://localhost:3000/mood/${level}`);
+    currentSong.value = await res.json();
+  } catch (err) {
+    console.error('❌ Erreur fetch mood:', err);
+  }
+}
 </script>
 
 <style scoped>
@@ -166,13 +156,26 @@ const friends = [
 .slider {
   width: 50%;
   appearance: none;
-  height: 10px;
+  height: 7px;
   border-radius: 5px;
   outline: none;
   background: #00ff88;
   transition: background 0.3s;
   margin-top: 10px;
 }
+
+.slider::-webkit-slider-thumb {
+-webkit-appearance: none;
+appearance: none;
+width: 24px;
+height: 24px;
+border: 2px solid #00ff88;
+border-radius: 50%;
+box-shadow: 0 0 10px #00ff88;
+cursor: pointer;
+transition: transform 0.2s ease;
+}
+
 
 .slider::-webkit-slider-thumb {
   -webkit-appearance: none;
@@ -228,6 +231,10 @@ const friends = [
   margin: 0;
   font-size: 0.9rem;
   color: #ccc;
+}
+
+.audio {
+  margin-top: 0.5rem;
 }
 
 .sidebar-title {
