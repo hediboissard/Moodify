@@ -46,19 +46,12 @@
         <div class="track-meta">
           <h3>{{ currentSong.title }}</h3>
           <p>{{ currentSong.artist }}</p>
-          <audio
-            v-if="currentSong.preview_url"
-            :src="currentSong.preview_url"
-            controls
-            autoplay
-            class="audio"
-          />
-          <p v-else class="text-sm text-red-400">Pas de preview disponible</p>
         </div>
       </div>
     </div>
 
-    <MusicPlayer />
+    <MusicPlayer :track="currentSong" />
+
   </div>
 </template>
 
