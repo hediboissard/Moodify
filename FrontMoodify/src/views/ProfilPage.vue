@@ -34,11 +34,22 @@
       />
     </div>
 
-    <button
-      class="mt-12 bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-6 rounded-lg"
-    >
-      Account Delete
-    </button>
+    <div class="mt-8 flex flex-col items-center space-y-4">
+      <!-- 🔴 Suppression de compte -->
+      <button
+        class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-6 rounded-lg"
+      >
+        Account Delete
+      </button>
+
+      <!-- 🔒 Déconnexion -->
+      <button
+        @click="handleLogout"
+        class="bg-gray-700 hover:bg-gray-800 text-white font-bold py-2 px-6 rounded-lg"
+      >
+        Log out
+      </button>
+    </div>
   </div>
 </template>
 
@@ -59,4 +70,10 @@ onMounted(async () => {
     console.error("❌ Erreur lors de la récupération du profil :", err)
   }
 })
+
+const handleLogout = () => {
+  localStorage.removeItem('token')
+  localStorage.removeItem('user')
+  router.push('/')
+}
 </script>
