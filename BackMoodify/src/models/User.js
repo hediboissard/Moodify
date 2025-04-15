@@ -1,6 +1,6 @@
 const db = require('../db')
 
-// ✅ Créer un utilisateur sans name/surname/birthdate
+// ✅ Créer un utilisateur
 const createUser = (email, password, username) => {
   return new Promise((resolve, reject) => {
     const sql = `
@@ -18,19 +18,15 @@ const createUser = (email, password, username) => {
   })
 }
 
-
 // 🔍 Trouver un utilisateur par email
 const findUserByEmail = (email) => {
   return new Promise((resolve, reject) => {
     const sql = 'SELECT * FROM users WHERE email = ?'
-    console.log("🔍 Requête SQL :", sql, email)
-
     db.query(sql, [email], (err, results) => {
       if (err) {
         console.error("❌ Erreur SQL dans findUserByEmail :", err)
         return reject(err)
       }
-      console.log("✅ Résultats SQL :", results)
       resolve(results[0] || null)
     })
   })
@@ -50,8 +46,38 @@ const findUserById = (id) => {
   })
 }
 
+// 🖼️ Mettre à jour l'avatar
+const updateAvatar = (id, avatarPath) => {
+  return new Promise((resolve, reject) => {
+    const sql = 'UPDATE users SET avatar = ? WHERE id = ?'
+    db.query(sql, [avatarPath, id], (err, result) => {
+      if (err) {
+        console.error("❌ Erreur SQL dans updateAvatar :", err)
+        return reject(err)
+      }
+      resolve(result)
+    })
+  })
+}
+
+// ❌ Supprimer un utilisateur
+const deleteUser = (id) => {
+  return new Promise((resolve, reject) => {
+    const sql = 'DELETE FROM users WHERE id = ?'
+    db.query(sql, [id], (err, result) => {
+      if (err) {
+        console.error("❌ Erreur SQL dans deleteUser :", err)
+        return reject(err)
+      }
+      resolve(result)
+    })
+  })
+}
+
 module.exports = {
   createUser,
   findUserByEmail,
-  findUserById
+  findUserById,
+  updateAvatar,
+  deleteUser
 }
