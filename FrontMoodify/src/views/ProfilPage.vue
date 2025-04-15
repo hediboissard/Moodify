@@ -9,9 +9,9 @@
       </div>
   
       <div class="mt-10 space-y-6 text-lg">
-        <p><span class="font-bold">Pseudo:</span> {{ user.pseudo }}</p>
-        <p><span class="font-bold">Name:</span> {{ user.name }}</p>
-        <p><span class="font-bold">Surname:</span> {{ user.surname }}</p>
+        <p><span class="font-bold">Username:</span> {{ user.username }}</p> <input type="text" placeholder="Username" class="w-full border border-green-500 rounded-lg py-2 px-4 bg-black text-green-500 placeholder-green-500" />
+        <p><span class="font-bold">Change Password:</span> {{ user.password }}</p><input type="password" placeholder="New Password" class="w-full border border-green-500 rounded-lg py-2 px-4 bg-black text-green-500 placeholder-green-500" />
+        <p><span class="font-bold">Confirm Password:</span> {{ user.username }}</p> <input type="password" placeholder="Confirm New Password" class="w-full border border-green-500 rounded-lg py-2 px-4 bg-black text-green-500 placeholder-green-500" />
       </div>
   
       <button class="mt-12 bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-6 rounded-lg">
