@@ -1,24 +1,23 @@
-const axios = require('axios');
-const findPreview = require('spotify-preview-finder');
-require('dotenv').config();
+const axios = require("axios");
+const findPreview = require("spotify-preview-finder");
+require("dotenv").config();
 
 let accessToken;
 let tokenExpiresAt = 0;
 
 const moodToPlaylist = {
-    0: '1ctpkuNEQGEH3UflkUi9qq', // Bad | Musicas tristes 2025
-    1: '37i9dQZF1DX0eXqYHdgDwI', // piangere fortissimo
-    2: '37i9dQZF1DWVV27DiNWxkR', // Sad Indie
-    3: '37i9dQZF1DX3YSRoSdA634', // Life Sucks
-    4: '37i9dQZF1DX3csziQj0d5b', // homework vibes
-    5: '4quQa2RBA1PbNMaJGEXvWA', // Music joyeuse
-    6: '1llkez7kiZtBeOw5UjFlJq', // The Ultimate Happy Playlist
-    7: '6mGhgb5BFsmxEWDHMjCQ1S', // Happy Hits!
-    8: '37i9dQZF1DX3rxVfibe1L0', // Mood Booster
-    9: '1h90L3LP8kAJ7KGjCV2Xfd', // Feel Good Happy Hits
-    10: '37i9dQZF1DX7KNKjOK0o75' // Have a Great Day!
-  };
-  
+  0: "66mlVn4GNwwbpJZrE8XuGi", // Bad | Musicas tristes 2025
+  1: "66mlVn4GNwwbpJZrE8XuGi", // piangere fortissimo
+  2: "37i9dQZF1DWVV27DiNWxkR", // Sad Indie
+  3: "37i9dQZF1DX3YSRoSdA634", // Life Sucks
+  4: "37i9dQZF1DX3csziQj0d5b", // homework vibes
+  5: "4quQa2RBA1PbNMaJGEXvWA", // Music joyeuse
+  6: "1llkez7kiZtBeOw5UjFlJq", // The Ultimate Happy Playlist
+  7: "6mGhgb5BFsmxEWDHMjCQ1S", // Happy Hits!
+  8: "37i9dQZF1DX3rxVfibe1L0", // Mood Booster
+  9: "1h90L3LP8kAJ7KGjCV2Xfd", // Feel Good Happy Hits
+  10: "37i9dQZF1DX7KNKjOK0o75", // Have a Great Day!
+};
 
 function getPlaylistIdFromMood(mood) {
   const normalizedMood = Math.max(0, Math.min(10, Math.round(mood)));
@@ -27,15 +26,19 @@ function getPlaylistIdFromMood(mood) {
 
 async function getAccessToken() {
   const res = await axios.post(
-    'https://accounts.spotify.com/api/token',
-    new URLSearchParams({ grant_type: 'client_credentials' }),
+    "https://accounts.spotify.com/api/token",
+    new URLSearchParams({ grant_type: "client_credentials" }),
     {
       headers: {
-        Authorization: 'Basic ' + Buffer.from(
-          process.env.SPOTIFY_CLIENT_ID + ':' + process.env.SPOTIFY_CLIENT_SECRET
-        ).toString('base64'),
-        'Content-Type': 'application/x-www-form-urlencoded'
-      }
+        Authorization:
+          "Basic " +
+          Buffer.from(
+            process.env.SPOTIFY_CLIENT_ID +
+              ":" +
+              process.env.SPOTIFY_CLIENT_SECRET
+          ).toString("base64"),
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
     }
   );
   accessToken = res.data.access_token;
@@ -50,16 +53,19 @@ async function getSongFromMood(score) {
   console.log("🎚️ Mood:", mood, "=> Playlist ID:", playlistId);
 
   try {
-    const res = await axios.get(`https://api.spotify.com/v1/playlists/${playlistId}/tracks`, {
-      headers: {
-        Authorization: `Bearer ${accessToken}`
-      },
-      params: {
-        limit: 50
+    const res = await axios.get(
+      `https://api.spotify.com/v1/playlists/${playlistId}/tracks`,
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+        params: {
+          limit: 50,
+        },
       }
-    });
+    );
 
-    const items = res.data.items.map(item => item.track).filter(Boolean);
+    const items = res.data.items.map((item) => item.track).filter(Boolean);
     const randomTrack = items[Math.floor(Math.random() * items.length)];
 
     let preview_url = randomTrack.preview_url;
@@ -74,7 +80,10 @@ async function getSongFromMood(score) {
           console.log("🔁 Preview récupérée via preview-finder:", preview_url);
         }
       } catch (scrapeError) {
-        console.warn("⚠️ Erreur lors du fallback preview:", scrapeError.message);
+        console.warn(
+          "⚠️ Erreur lors du fallback preview:",
+          scrapeError.message
+        );
       }
     }
 
@@ -83,9 +92,8 @@ async function getSongFromMood(score) {
       artist: randomTrack.artists[0].name,
       image: randomTrack.album.images[0]?.url || null,
       preview_url,
-      spotify_url: randomTrack.external_urls.spotify
+      spotify_url: randomTrack.external_urls.spotify,
     };
-
   } catch (err) {
     console.error("❌ Erreur dans getSongFromMood:", err.stack || err.message);
     throw new Error("Erreur lors de la récupération de la musique.");
@@ -93,5 +101,5 @@ async function getSongFromMood(score) {
 }
 
 module.exports = {
-  getSongFromMood
+  getSongFromMood,
 };
