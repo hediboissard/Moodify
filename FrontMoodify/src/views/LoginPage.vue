@@ -1,23 +1,26 @@
 <template>
   <div class="min-h-screen flex items-center justify-center bg-black">
     <div class="text-center w-[600px] text-green-500 space-y-5 bg-[#1e1e1e] p-10 rounded-xl">
-
+      <!-- Logo -->
       <div class="flex items-center justify-center space-x-4">
         <img src="@/assets/logo.png" alt="Logo" class="logo h-16 w-16" />
         <h1 class="text-5xl font-bold text-green-500" id="moodify">Moodify</h1>
       </div>
 
+      <!-- Register -->
       <button @click="goToRegister"
         class="w-full border border-green-500 rounded-lg py-2 hover:bg-green-600 hover:text-white transition">
         Create account
       </button>
 
+      <!-- ou -->
       <div class="flex items-center justify-center space-x-4">
         <hr class="border-green-500 flex-1" />
         <span class="text-green-500">or</span>
         <hr class="border-green-500 flex-1" />
       </div>
 
+      <!-- Bouton Spotify -->
       <button class="w-full border border-green-500 rounded-lg py-2 flex items-center justify-center space-x-2 hover:bg-green-600 hover:text-white transition">
         <svg class="w-5 h-5" viewBox="0 0 168 168" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
           <path d="M84,0C37.7,0,0,37.7,0,84s37.7,84,84,84s84-37.7,84-84S130.3,0,84,0z M121.3,120.1c-1.5,2.5-4.7,3.3-7.2,1.8
@@ -29,6 +32,7 @@
         <span>Continue with Spotify</span>
       </button>
 
+      <!-- Formulaire -->
       <input
         v-model="email"
         type="text"
@@ -63,7 +67,19 @@ const router = useRouter()
 const email = ref('')
 const password = ref('')
 
+const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+
 const handleLogin = async () => {
+  if (!email.value || !password.value) {
+    alert("Veuillez remplir tous les champs.")
+    return
+  }
+
+  if (!emailRegex.test(email.value)) {
+    alert("Format de l'email invalide.")
+    return
+  }
+
   try {
     const response = await login({ email: email.value, password: password.value })
     const token = response.token || response.data?.token
@@ -92,14 +108,8 @@ function goToRegister() {
 .logo {
   animation: spin 3s linear infinite;
 }
-
 @keyframes spin {
-  0% {
-    transform: rotate(0deg);
-  }
-
-  100% {
-    transform: rotate(360deg);
-  }
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 </style>
