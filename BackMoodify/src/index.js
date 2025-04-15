@@ -20,15 +20,7 @@ app.get('/mood/:score', async (req, res) => {
 });
 
 
-app.get('/genres', async (req, res) => {
-    try {
-      const genres = await getAvailableGenres();
-      res.json(genres);
-    } catch (err) {
-      console.error(err);
-      res.status(500).json({ error: 'Erreur lors de la récupération des genres' });
-    }
-  });
+
   
 
 
