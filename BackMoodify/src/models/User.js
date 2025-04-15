@@ -46,38 +46,24 @@ const findUserById = (id) => {
   })
 }
 
-// 🖼️ Mettre à jour l'avatar
-const updateAvatar = (id, avatarPath) => {
+// 🔍 Trouver un utilisateur par Spotify ID
+const findUserBySpotifyId = (spotifyId) => {
   return new Promise((resolve, reject) => {
-    const sql = 'UPDATE users SET avatar = ? WHERE id = ?'
-    db.query(sql, [avatarPath, id], (err, result) => {
+    const sql = 'SELECT * FROM users WHERE spotify_id = ?'
+    db.query(sql, [spotifyId], (err, results) => {
       if (err) {
-        console.error("❌ Erreur SQL dans updateAvatar :", err)
+        console.error("❌ Erreur SQL dans findUserBySpotifyId :", err)
         return reject(err)
       }
-      resolve(result)
+      resolve(results[0] || null)
     })
   })
 }
 
-// ❌ Supprimer un utilisateur
-const deleteUser = (id) => {
-  return new Promise((resolve, reject) => {
-    const sql = 'DELETE FROM users WHERE id = ?'
-    db.query(sql, [id], (err, result) => {
-      if (err) {
-        console.error("❌ Erreur SQL dans deleteUser :", err)
-        return reject(err)
-      }
-      resolve(result)
-    })
-  })
-}
 
 module.exports = {
   createUser,
   findUserByEmail,
   findUserById,
-  updateAvatar,
-  deleteUser
+  findUserBySpotifyId
 }
