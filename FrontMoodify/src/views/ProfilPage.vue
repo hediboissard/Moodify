@@ -13,25 +13,34 @@
       <!-- Username affiché -->
       <p><span class="font-bold">Username:</span> {{ user?.username || 'Inconnu' }}</p>
 
-      <!-- Changement username -->
-      <input
-        type="text"
-        placeholder="New Username"
-        class="w-full border border-green-500 rounded-lg py-2 px-4 bg-black text-green-500 placeholder-green-500"
-      />
+      <!-- ℹ️ Message si user Spotify -->
+      <p v-if="isSpotifyUser" class="text-gray-400 text-sm italic">
+        Informations synchronisées avec Spotify — non modifiables.
+      </p>
 
-      <!-- Modification de mot de passe -->
-      <p><span class="font-bold">Change Password:</span></p>
-      <input
-        type="password"
-        placeholder="New Password"
-        class="w-full border border-green-500 rounded-lg py-2 px-4 bg-black text-green-500 placeholder-green-500"
-      />
-      <input
-        type="password"
-        placeholder="Confirm New Password"
-        class="w-full border border-green-500 rounded-lg py-2 px-4 bg-black text-green-500 placeholder-green-500"
-      />
+      <!-- 🔤 Changement username (non Spotify uniquement) -->
+      <div v-if="!isSpotifyUser">
+        <input
+          type="text"
+          placeholder="New Username"
+          class="w-full border border-green-500 rounded-lg py-2 px-4 bg-black text-green-500 placeholder-green-500"
+        />
+      </div>
+
+      <!-- 🔑 Changement mot de passe (non Spotify uniquement) -->
+      <div v-if="!isSpotifyUser">
+        <p><span class="font-bold">Change Password:</span></p>
+        <input
+          type="password"
+          placeholder="New Password"
+          class="w-full border border-green-500 rounded-lg py-2 px-4 bg-black text-green-500 placeholder-green-500"
+        />
+        <input
+          type="password"
+          placeholder="Confirm New Password"
+          class="w-full border border-green-500 rounded-lg py-2 px-4 bg-black text-green-500 placeholder-green-500"
+        />
+      </div>
     </div>
 
     <div class="mt-8 flex flex-col items-center space-y-4">
@@ -55,19 +64,20 @@ import Navbar from '@/components/Navbar.vue'
 import { getProfile, getSpotifyProfile } from '@/services/authService'
 
 const user = ref({})
+const isSpotifyUser = ref(false)
 const router = useRouter()
 
 onMounted(async () => {
   try {
     const spotifyId = localStorage.getItem('spotify_id')
     if (spotifyId) {
-      // 👤 Utilisateur Spotify
       const profile = await getSpotifyProfile(spotifyId)
       user.value = profile
+      isSpotifyUser.value = true
     } else {
-      // 🔐 Utilisateur avec token classique
       const profile = await getProfile()
       user.value = profile
+      isSpotifyUser.value = false
     }
   } catch (err) {
     console.error("❌ Erreur lors de la récupération du profil :", err)
