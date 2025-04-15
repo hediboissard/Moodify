@@ -29,8 +29,13 @@ const user = ref({ username: '' })
 onMounted(() => {
   const storedUser = localStorage.getItem('user')
   if (storedUser) {
-    const parsedUser = JSON.parse(storedUser)
-    user.value.username = parsedUser.username
+    try {
+      const parsed = JSON.parse(storedUser)
+      user.value.username = parsed.username || parsed.pseudo || 'Unknown'
+    } catch (e) {
+      console.error("❌ Erreur parsing localStorage :", e)
+    }
   }
 })
 </script>
+
