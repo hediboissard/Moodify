@@ -79,9 +79,6 @@
         username: username.value,
         email: email.value,
         password: password.value,
-        name: 'NomTest',
-        surname: 'PrénomTest',
-        birthdate: '2000-01-01'
       })
       alert("Inscription réussie ! Vous pouvez vous connecter.")
       router.push('/')
