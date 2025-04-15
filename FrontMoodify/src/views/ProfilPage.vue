@@ -9,6 +9,9 @@
       />
     </div>
 
+
+
+    <!-- 🧑 Infos utilisateur -->
     <div class="mt-10 space-y-6 text-lg w-full max-w-md">
       <!-- Username affiché -->
       <p><span class="font-bold">Username:</span> {{ user?.username || 'Inconnu' }}</p>
@@ -43,10 +46,10 @@
       </div>
     </div>
 
+    <!-- 🔧 Actions -->
     <div class="mt-8 flex flex-col items-center space-y-4">
-      <!-- 🔴 Suppression de compte -->
-      <button class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-6 rounded-lg">
-        Account Delete
+      <button @click="deleteAccount" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-6 rounded-lg">
+        Delete Account
       </button>
 
       <!-- 🔒 Déconnexion -->
@@ -62,11 +65,15 @@ import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import Navbar from '@/components/Navbar.vue'
 import { getProfile, getSpotifyProfile } from '@/services/authService'
+import axios from 'axios'
 
-const user = ref({})
+const user = ref({ username: '', avatar: '' })
+const fileInput = ref(null)
 const isSpotifyUser = ref(false)
+
 const router = useRouter()
 
+// ✅ Récupération profil
 onMounted(async () => {
   try {
     const spotifyId = localStorage.getItem('spotify_id')
@@ -84,6 +91,37 @@ onMounted(async () => {
   }
 })
 
+// 🔄 Trigger input file
+const triggerFileInput = () => {
+  fileInput.value?.click()
+}
+
+// 📤 Envoi de l'avatar
+const uploadAvatar = async (event) => {
+  const file = event.target.files[0]
+  if (!file) return
+
+  const formData = new FormData()
+  formData.append('avatar', file)
+
+  try {
+    const token = localStorage.getItem('token')
+    const res = await axios.post('http://localhost:3000/api/users/avatar', formData, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'multipart/form-data'
+      }
+    })
+
+    user.value.avatar = res.data.avatar
+    alert("✅ Photo de profil mise à jour")
+  } catch (err) {
+    console.error("❌ Erreur upload avatar :", err)
+    alert("Erreur lors de l'envoi de l'image")
+  }
+}
+
+// 🔓 Déconnexion
 const handleLogout = () => {
   if (confirm("Voulez-vous vraiment vous déconnecter ?")) {
     localStorage.removeItem('token')
