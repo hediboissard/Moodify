@@ -6,16 +6,16 @@ let accessToken;
 let tokenExpiresAt = 0;
 
 const moodToPlaylist = {
-    0: '1ctpkuNEQGEH3UflkUi9qq', // Bad | Musicas tristes 2025
-    1: '37i9dQZF1DX0eXqYHdgDwI', // piangere fortissimo
+    0: '37i9dQZF1DZ06evO0W1502cd27c05243a4', // Bad | Musicas tristes 2025
+    1: '37i9dQZF1DZ06evO0W1502cd27c05243a4', // piangere fortissimo
     2: '37i9dQZF1DWVV27DiNWxkR', // Sad Indie
     3: '37i9dQZF1DX3YSRoSdA634', // Life Sucks
     4: '37i9dQZF1DX3csziQj0d5b', // homework vibes
-    5: '4quQa2RBA1PbNMaJGEXvWA', // Music joyeuse
-    6: '1llkez7kiZtBeOw5UjFlJq', // The Ultimate Happy Playlist
+    5: '4quQa2RBA1PbNMaJGEXvWA', // Music joyeuse MARCHE
+    6: '1llkez7kiZtBeOw5UjFlJq', // The Ultimate Happy Playlist MARCHE
     7: '6mGhgb5BFsmxEWDHMjCQ1S', // Happy Hits!
     8: '37i9dQZF1DX3rxVfibe1L0', // Mood Booster
-    9: '1h90L3LP8kAJ7KGjCV2Xfd', // Feel Good Happy Hits
+    9: '1h90L3LP8kAJ7KGjCV2Xfd', // Feel Good Happy Hits MARCHE
     10: '37i9dQZF1DX7KNKjOK0o75' // Have a Great Day!
   };
   
