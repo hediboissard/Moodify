@@ -1,5 +1,6 @@
 const db = require('../db')
 
+// ➕ Créer un utilisateur
 const createUser = (email, password, username, name, surname, birthdate) => {
   return new Promise((resolve, reject) => {
     const sql = `
@@ -20,6 +21,7 @@ const createUser = (email, password, username, name, surname, birthdate) => {
   })
 }
 
+// 🔍 Trouver un utilisateur par email
 const findUserByEmail = (email) => {
   return new Promise((resolve, reject) => {
     const sql = 'SELECT * FROM users WHERE email = ?'
@@ -31,12 +33,24 @@ const findUserByEmail = (email) => {
         return reject(err)
       }
       console.log("✅ Résultats SQL :", results)
-      resolve(results[0] || null) // sécurité anti-undefined
+      resolve(results[0] || null)
+    })
+  })
+}
+
+// 🔍 Trouver un utilisateur par ID
+const findUserById = (id) => {
+  return new Promise((resolve, reject) => {
+    const sql = 'SELECT * FROM users WHERE id = ?'
+    db.query(sql, [id], (err, results) => {
+      if (err) return reject(err)
+      resolve(results[0])
     })
   })
 }
 
 module.exports = {
   createUser,
-  findUserByEmail
+  findUserByEmail,
+  findUserById
 }
