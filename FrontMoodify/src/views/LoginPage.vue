@@ -1,14 +1,14 @@
 <template>
-  <div class="min-h-screen flex items-center justify-center" style="background-color: var(--black-main)">
-    <div class="text-center text-green-500 space-y-5" style="background-color: var(--gray-main); padding: 40px; border-radius: 10px;">
+  <div class="min-h-screen flex items-center justify-center bg-black">
+    <div class="text-center w-[600px] text-green-500 space-y-5 bg-[#1e1e1e] p-10 rounded-xl">
+
       <div class="flex items-center justify-center space-x-4">
         <img src="@/assets/logo.png" alt="Logo" class="logo h-16 w-16" />
-        <h1 class="text-3xl font-bold text-green-500">Moodify</h1>
+        <h1 class="text-5xl font-bold text-green-500" id="moodify">Moodify</h1>
       </div>
 
-
       <button @click="goToRegister"
-      class="w-full border border-green-500 rounded-lg py-2 hover:bg-green-600 hover:text-white transition">
+        class="w-full border border-green-500 rounded-lg py-2 hover:bg-green-600 hover:text-white transition">
         Create account
       </button>
 
@@ -30,21 +30,17 @@
       </button>
 
       <input
-        v-model="emailOrUsername"
-        type="text"
-        placeholder="Username"
-        class="w-full border border-green-500 rounded-lg py-2 px-4 bg-CustomBlack text-green-500 placeholder-green-500 focus:outline-none focus:ring-2 focus:ring-green-600"
-      />
-      <input
+        v-model="email"
         type="text"
         placeholder="Email"
-        class="w-full border border-green-500 rounded-lg py-2 px-4 bg-CustomBlack text-green-500 placeholder-green-500 focus:outline-none focus:ring-2 focus:ring-green-600"
+        class="w-full border border-green-500 rounded-lg py-2 px-4 bg-black text-white placeholder-green-500 focus:outline-none focus:ring-2 focus:ring-green-600"
       />
+
       <input
         v-model="password"
         type="password"
         placeholder="Password"
-        class="w-full border border-green-500 rounded-lg py-2 px-4 bg-CustomBlack text-green-500 placeholder-green-500 focus:outline-none focus:ring-2 focus:ring-green-600"
+        class="w-full border border-green-500 rounded-lg py-2 px-4 bg-black text-white placeholder-green-500 focus:outline-none focus:ring-2 focus:ring-green-600"
       />
 
       <button
@@ -64,40 +60,46 @@ import { login } from '../services/authService'
 
 const router = useRouter()
 
-const emailOrUsername = ref('')
+const email = ref('')
 const password = ref('')
 
 const handleLogin = async () => {
   try {
-    const response = await login({
-      email: emailOrUsername.value,
-      password: password.value
-    })
-    localStorage.setItem('token', response.data.token)
+    const response = await login({ email: email.value, password: password.value })
+    const token = response.token || response.data?.token
+
+    if (!token) {
+      console.error("❌ Token manquant :", response)
+      alert("Erreur : Token manquant.")
+      return
+    }
+
+    localStorage.setItem('token', token)
+    alert("✅ Connexion réussie !")
     router.push('/home')
   } catch (err) {
-    console.error(err)
+    console.error("❌ Erreur login :", err)
     alert('Connexion échouée : ' + (err.response?.data?.message || err.message))
   }
 }
+
 function goToRegister() {
   router.push('/register')
 }
 </script>
 
 <style scoped>
-
 .logo {
-    animation: spin 3s linear infinite;
+  animation: spin 3s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
   }
-  
-  @keyframes spin {
-    0% {
-      transform: rotate(0deg);
-    }
-  
-    100% {
-      transform: rotate(360deg);
-    }
+
+  100% {
+    transform: rotate(360deg);
   }
-</style >
+}
+</style>
