@@ -2,59 +2,37 @@
   <Navbar />
   <div class="bg-neutral-900 text-white flex flex-col items-center min-h-screen px-4 py-12">
 
-    <!-- 🖼️ Avatar -->
-    <div class="mt-6 relative group">
+    <div class="mt-6 relative">
+      <input type="file" ref="fileInput" @change="uploadAvatar" accept="image/*" class="hidden" />
       <img
         :src="user.avatar ? `http://localhost:3000${user.avatar}` : 'https://www.svgrepo.com/show/382106/profile-avatar.svg'"
-        alt="Profile"
-        class="w-32 h-32 rounded-full border-2 border-gray-600 cursor-pointer hover:opacity-70 transition"
-        @click="triggerFileInput"
-      />
-      <input
-        type="file"
-        ref="fileInput"
-        @change="uploadAvatar"
-        accept="image/*"
-        class="hidden"
-      />
+        alt="Profile" class="w-32 h-32 rounded-full border-2 border-gray-600 object-cover cursor-pointer"
+        @click="triggerFileInput" />
     </div>
+
+
 
     <!-- 🧑 Infos utilisateur -->
     <div class="mt-10 space-y-6 text-lg w-full max-w-md">
       <p><span class="font-bold">Username:</span> {{ user.username }}</p>
 
-      <input
-        type="text"
-        placeholder="New Username"
-        class="w-full border border-green-500 rounded-lg py-2 px-4 bg-black text-green-500 placeholder-green-500"
-      />
+      <input type="text" placeholder="New Username"
+        class="w-full border border-green-500 rounded-lg py-2 px-4 bg-black text-green-500 placeholder-green-500" />
 
       <p><span class="font-bold">Change Password:</span></p>
-      <input
-        type="password"
-        placeholder="New Password"
-        class="w-full border border-green-500 rounded-lg py-2 px-4 bg-black text-green-500 placeholder-green-500"
-      />
-      <input
-        type="password"
-        placeholder="Confirm New Password"
-        class="w-full border border-green-500 rounded-lg py-2 px-4 bg-black text-green-500 placeholder-green-500"
-      />
+      <input type="password" placeholder="New Password"
+        class="w-full border border-green-500 rounded-lg py-2 px-4 bg-black text-green-500 placeholder-green-500" />
+      <input type="password" placeholder="Confirm New Password"
+        class="w-full border border-green-500 rounded-lg py-2 px-4 bg-black text-green-500 placeholder-green-500" />
     </div>
 
     <!-- 🔧 Actions -->
     <div class="mt-8 flex flex-col items-center space-y-4">
-      <button
-        @click="deleteAccount"
-        class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-6 rounded-lg"
-      >
+      <button @click="deleteAccount" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-6 rounded-lg">
         Delete Account
       </button>
 
-      <button
-        @click="handleLogout"
-        class="bg-gray-700 hover:bg-gray-800 text-white font-bold py-2 px-6 rounded-lg"
-      >
+      <button @click="handleLogout" class="bg-gray-700 hover:bg-gray-800 text-white font-bold py-2 px-6 rounded-lg">
         Log out
       </button>
     </div>

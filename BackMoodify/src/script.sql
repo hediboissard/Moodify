@@ -12,3 +12,6 @@ CREATE TABLE users (
   mood VARCHAR(50),
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+-- Ajouter la colonne avatar à la table users
+ALTER TABLE users ADD COLUMN avatar VARCHAR(255);
