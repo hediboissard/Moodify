@@ -1,13 +1,13 @@
 const db = require('../db')
 
 // ➕ Créer un utilisateur
-const createUser = (email, password, username, name, surname, birthdate) => {
+const createUser = (email, password, username) => {
   return new Promise((resolve, reject) => {
     const sql = `
-      INSERT INTO users (email, password, username, name, surname, birthdate)
-      VALUES (?, ?, ?, ?, ?, ?)
+      INSERT INTO users (email, password, username)
+      VALUES (?, ?, ?)
     `
-    const values = [email, password, username, name, surname, birthdate]
+    const values = [email, password, username]
     console.log("🟡 Insertion SQL avec :", values)
 
     db.query(sql, values, (err, result) => {

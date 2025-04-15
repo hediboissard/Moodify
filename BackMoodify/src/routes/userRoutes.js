@@ -11,12 +11,13 @@ router.get("/me", authMiddleware, async (req, res) => {
 
     res.json({
       username: user.username,
-      email: user.email, // ✅ Ajouté ici
+      email: user.email, 
     });
   } catch (err) {
     console.error("❌ Erreur dans /me :", err);
     res.status(500).json({ message: "Erreur serveur" });
   }
 });
+
 
 module.exports = router;

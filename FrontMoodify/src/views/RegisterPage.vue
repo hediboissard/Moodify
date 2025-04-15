@@ -78,10 +78,7 @@
       await register({
         username: username.value,
         email: email.value,
-        password: password.value,
-        name: 'NomTest',
-        surname: 'PrénomTest',
-        birthdate: '2000-01-01'
+        password: password.value
       })
       alert("Inscription réussie ! Vous pouvez vous connecter.")
       router.push('/')

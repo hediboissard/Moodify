@@ -2,9 +2,8 @@ const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 const User = require('../models/User')
 
-// ✅ REGISTER
 const register = async (req, res) => {
-  const { email, password, username, name, surname, birthdate } = req.body
+  const { email, password, username } = req.body
 
   try {
     const existing = await User.findUserByEmail(email)
@@ -13,14 +12,7 @@ const register = async (req, res) => {
     }
 
     const hashedPassword = await bcrypt.hash(password, 10)
-    const userId = await User.createUser(
-      email,
-      hashedPassword,
-      username,
-      name,
-      surname,
-      birthdate
-    )
+    const userId = await User.createUser(email, hashedPassword, username)
 
     res.status(201).json({ message: 'Utilisateur créé avec succès', userId })
   } catch (err) {
@@ -47,7 +39,6 @@ const login = async (req, res) => {
       return res.status(401).json({ message: "Mot de passe incorrect" })
     }
 
-    // 🎟️ Génère le token JWT
     const token = jwt.sign(
       { id: user.id, email: user.email },
       process.env.JWT_SECRET || "moodifysupersecret",
