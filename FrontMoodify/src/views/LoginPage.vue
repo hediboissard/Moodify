@@ -7,6 +7,7 @@
         <h1 class="text-5xl font-bold text-green-500" id="moodify">Moodify</h1>
       </div>
 
+
       <button @click="goToRegister"
         class="w-full border border-green-500 rounded-lg py-2 hover:bg-green-600 hover:text-white transition">
         Create account
@@ -32,24 +33,14 @@
   <span>Continue with Spotify</span>
 </a>
 
-      <input
-        v-model="email"
-        type="text"
-        placeholder="Email"
-        class="w-full border border-green-500 rounded-lg py-2 px-4 text-white placeholder-green-500 focus:outline-none focus:ring-2 focus:ring-green-600"
-      />
+      <input v-model="email" type="text" placeholder="Email"
+        class="w-full border border-green-500 rounded-lg py-2 px-4 text-white placeholder-green-500 focus:outline-none focus:ring-2 focus:ring-green-600" />
 
-      <input
-        v-model="password"
-        type="password"
-        placeholder="Password"
-        class="w-full border border-green-500 rounded-lg py-2 px-4  text-white placeholder-green-500 focus:outline-none focus:ring-2 focus:ring-green-600"
-      />
+      <input v-model="password" type="password" placeholder="Password"
+        class="w-full border border-green-500 rounded-lg py-2 px-4  text-white placeholder-green-500 focus:outline-none focus:ring-2 focus:ring-green-600" />
 
-      <button
-        @click="handleLogin"
-        class="w-full bg-green-500 text-white font-semibold py-2 rounded-lg hover:bg-green-600 transition"
-      >
+      <button @click="handleLogin"
+        class="w-full bg-green-500 text-white font-semibold py-2 rounded-lg hover:bg-green-600 transition">
         Log in
       </button>
     </div>
@@ -77,7 +68,19 @@ const router = useRouter()
 const email = ref('')
 const password = ref('')
 
+const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+
 const handleLogin = async () => {
+  if (!email.value || !password.value) {
+    alert("Veuillez remplir tous les champs.")
+    return
+  }
+
+  if (!emailRegex.test(email.value)) {
+    alert("Format de l'email invalide.")
+    return
+  }
+
   try {
     const response = await login({ email: email.value, password: password.value })
     const token = response.token || response.data?.token
