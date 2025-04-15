@@ -4,7 +4,7 @@ const User = require('../models/User')
 
 // ✅ REGISTER
 const register = async (req, res) => {
-  const { email, password, username, name, surname, birthdate } = req.body
+  const { email, password, username } = req.body
 
   try {
     const existing = await User.findUserByEmail(email)
@@ -13,14 +13,7 @@ const register = async (req, res) => {
     }
 
     const hashedPassword = await bcrypt.hash(password, 10)
-    const userId = await User.createUser(
-      email,
-      hashedPassword,
-      username,
-      name,
-      surname,
-      birthdate
-    )
+    const userId = await User.createUser(email, hashedPassword, username)
 
     res.status(201).json({ message: 'Utilisateur créé avec succès', userId })
   } catch (err) {
@@ -28,6 +21,7 @@ const register = async (req, res) => {
     res.status(500).json({ message: "Erreur serveur : " + err.message })
   }
 }
+
 
 // ✅ LOGIN
 const login = async (req, res) => {
