@@ -40,7 +40,7 @@
         v-model="password"
         type="password"
         placeholder="Password"
-        class="w-full border border-green-500 rounded-lg py-2 px-4 text-white placeholder-green-500 focus:outline-none focus:ring-2 focus:ring-green-600"
+        class="w-full border border-green-500 rounded-lg py-2 px-4  text-white placeholder-green-500 focus:outline-none focus:ring-2 focus:ring-green-600"
       />
 
       <button
