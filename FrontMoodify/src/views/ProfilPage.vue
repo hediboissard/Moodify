@@ -72,8 +72,12 @@ onMounted(async () => {
 })
 
 const handleLogout = () => {
-  localStorage.removeItem('token')
-  localStorage.removeItem('user')
-  router.push('/')
+  if (confirm("Voulez-vous vraiment vous déconnecter ?")) {
+    localStorage.removeItem('token')
+    localStorage.removeItem('spotify_id')
+    localStorage.removeItem('user')
+    router.push('/')
+  }
 }
+
 </script>

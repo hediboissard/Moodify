@@ -53,17 +53,12 @@ import { useRouter } from 'vue-router'
 import { login } from '../services/authService'
 import { onMounted } from 'vue'
 
-onMounted(() => {
-  const params = new URLSearchParams(window.location.search)
-  const spotifyId = params.get("spotify_id")
+const router = useRouter()
 
-  if (spotifyId) {
-    localStorage.setItem("spotify_id", spotifyId) // si tu veux le garder
-    router.push("/home") // redirection automatique
-  }
+onMounted(() => {
+  console.log("🚀 LoginPage mounted")
 })
 
-const router = useRouter()
 
 const email = ref('')
 const password = ref('')

@@ -23,7 +23,9 @@ const router = createRouter({
 
 // 🔐 Navigation Guard
 router.beforeEach((to, from, next) => {
-  const isAuthenticated = !!localStorage.getItem('token')
+  const hasToken = !!localStorage.getItem('token')
+  const hasSpotifyId = !!localStorage.getItem('spotify_id')
+  const isAuthenticated = hasToken || hasSpotifyId
 
   if (to.meta.requiresAuth && !isAuthenticated) {
     next({ name: 'Login' })
