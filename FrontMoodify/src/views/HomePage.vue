@@ -50,7 +50,12 @@
       </div>
     </div>
 
-    <MusicPlayer :track="currentSong" />
+    <MusicPlayer
+      :track="currentSong"
+      :onPrev="playPrevious"
+      :onNext="playNext"
+    />
+
 
   </div>
 </template>
@@ -105,30 +110,6 @@ async function fetchSongByMood() {
     console.error('❌ Erreur fetch mood:', err);
   }
 }
-
-const friends = [
-  {
-    avatar: 'https://i.pravatar.cc/150?img=1',
-    username: 'lil_moody',
-    moodEmoji: '😎',
-    moodText: 'Chill',
-    currentTrack: 'Lo-Fi Vibes'
-  },
-  {
-    avatar: 'https://i.pravatar.cc/150?img=2',
-    username: 'sunny_day',
-    moodEmoji: '😊',
-    moodText: 'Happy',
-    currentTrack: 'Sunshine Beats'
-  },
-  {
-    avatar: 'https://i.pravatar.cc/150?img=3',
-    username: 'deep_mind',
-    moodEmoji: '🧘‍♂️',
-    moodText: 'Calm',
-    currentTrack: 'Zen Flow'
-  }
-];
 </script>
 
 <style scoped>

@@ -5,7 +5,6 @@
     v-if="track && track.title"
     @click="handleClick"
   >
-    <!-- Image en grand quand agrandi -->
     <transition name="fade">
       <img
         v-show="expanded"
@@ -15,38 +14,39 @@
       />
     </transition>
 
-    <div class="main-row">
-      <div class="track-info">
-        <img :src="track.image" alt="cover" class="cover" />
-        <div class="text">
-          <h4>{{ track.title }}</h4>
-          <p>{{ track.artist }}</p>
+    <div class="content-wrapper">
+      <div class="main-row">
+        <div class="track-info">
+          <img :src="track.image" alt="cover" class="cover" />
+          <div class="text">
+            <h4>{{ track.title }}</h4>
+            <p>{{ track.artist }}</p>
+          </div>
+        </div>
+
+        <div class="controls">
+          <button @click.stop="prevTrack">⏮️</button>
+          <button @click.stop="togglePlay">
+            {{ isPlaying ? '⏸️' : '▶️' }}
+          </button>
+          <button @click.stop="nextTrack">⏭️</button>
         </div>
       </div>
 
-      <div class="controls">
-        <button @click.stop="prevTrack">⏮️</button>
-        <button @click.stop="togglePlay">
-          {{ isPlaying ? '⏸️' : '▶️' }}
-        </button>
-        <button @click.stop="nextTrack">⏭️</button>
-      </div>
-    </div>
-
-    <!-- Barre de progression + Volume -->
-    <div class="extra-controls" v-show="expanded">
-      <input
-        type="range"
-        class="progress"
-        min="0"
-        :max="duration"
-        step="0.1"
-        v-model="currentTime"
-        @input="seek"
-      />
-      <div class="volume">
-        🔊
-        <input type="range" min="0" max="1" step="0.01" v-model="volume" @input="updateVolume" />
+      <div class="extra-controls" v-show="expanded">
+        <input
+          type="range"
+          class="progress"
+          min="0"
+          :max="duration"
+          step="0.1"
+          v-model="currentTime"
+          @input="seek"
+        />
+        <div class="volume">
+          🔊
+          <input type="range" min="0" max="1" step="0.01" v-model="volume" @input="updateVolume" />
+        </div>
       </div>
     </div>
 
@@ -161,7 +161,17 @@ watch(() => props.track, () => {
 
 .music-player.expanded {
   max-height: 90vh;
-  padding: 10rem 5rem;
+}
+
+.content-wrapper {
+  transition: padding 0.6s ease;
+  padding-top: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.music-player.expanded .content-wrapper {
+  padding-top: 4rem;
 }
 
 .big-cover {
@@ -273,6 +283,7 @@ watch(() => props.track, () => {
 .volume input {
   width: 100px;
 }
+
 .fade-enter-active,
 .fade-leave-active {
   transition: opacity 0.3s ease;
