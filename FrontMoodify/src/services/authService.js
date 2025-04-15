@@ -1,14 +1,28 @@
-// src/services/authService.js
 import axios from 'axios'
 
-const API_BASE_URL = 'http://localhost:3000/api' // 🔁 change si tu es en production
+const API_BASE_URL = 'http://localhost:3000/api'
 
 export const login = async (credentials) => {
   const res = await axios.post(`${API_BASE_URL}/auth/login`, credentials)
-  return res.data // ✅ très important pour simplifier la gestion du token
+  localStorage.setItem('token', res.data.token)
+  localStorage.setItem('user', JSON.stringify(res.data.user))
+  return res.data
 }
 
 export const register = async (userData) => {
   const res = await axios.post(`${API_BASE_URL}/auth/register`, userData)
+  return res.data
+}
+
+export const getProfile = async () => {
+  const token = localStorage.getItem('token')
+  if (!token) throw new Error('Token non disponible')
+
+  const res = await axios.get(`${API_BASE_URL}/users/me`, {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  })
+
   return res.data
 }
