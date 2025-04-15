@@ -42,6 +42,7 @@
   
   <style scoped>
   .navbar {
+    height: 10vh;
     background-color: #2c2c2c;
     padding: 1rem 2rem;
     display: flex;
