@@ -1,25 +1,23 @@
 const db = require('../db')
 
-// ➕ Créer un utilisateur
-const createUser = (email, password, username, name, surname, birthdate) => {
+// ✅ Créer un utilisateur sans name/surname/birthdate
+const createUser = (email, password, username) => {
   return new Promise((resolve, reject) => {
     const sql = `
-      INSERT INTO users (email, password, username, name, surname, birthdate)
-      VALUES (?, ?, ?, ?, ?, ?)
+      INSERT INTO users (email, password, username)
+      VALUES (?, ?, ?)
     `
-    const values = [email, password, username, name, surname, birthdate]
-    console.log("🟡 Insertion SQL avec :", values)
-
+    const values = [email, password, username]
     db.query(sql, values, (err, result) => {
       if (err) {
         console.error("❌ Erreur d'insertion SQL :", err.sqlMessage)
         return reject(err)
       }
-      console.log("✅ Résultat insertion :", result)
       resolve(result.insertId)
     })
   })
 }
+
 
 // 🔍 Trouver un utilisateur par email
 const findUserByEmail = (email) => {
@@ -43,8 +41,11 @@ const findUserById = (id) => {
   return new Promise((resolve, reject) => {
     const sql = 'SELECT * FROM users WHERE id = ?'
     db.query(sql, [id], (err, results) => {
-      if (err) return reject(err)
-      resolve(results[0])
+      if (err) {
+        console.error("❌ Erreur SQL dans findUserById :", err)
+        return reject(err)
+      }
+      resolve(results[0] || null)
     })
   })
 }
