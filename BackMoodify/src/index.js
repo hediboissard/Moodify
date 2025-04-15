@@ -9,6 +9,9 @@ const PORT = process.env.PORT || 3000;
 app.use(cors()); // autorise les appels depuis le front
 app.use(express.json());
 
+const authRoutes = require('./routes/authRoutes')
+
+
 app.use('/api/auth', authRoutes)
 
 
