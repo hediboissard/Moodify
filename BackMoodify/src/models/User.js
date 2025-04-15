@@ -50,8 +50,24 @@ const findUserById = (id) => {
   })
 }
 
+// 🔍 Trouver un utilisateur par Spotify ID
+const findUserBySpotifyId = (spotifyId) => {
+  return new Promise((resolve, reject) => {
+    const sql = 'SELECT * FROM users WHERE spotify_id = ?'
+    db.query(sql, [spotifyId], (err, results) => {
+      if (err) {
+        console.error("❌ Erreur SQL dans findUserBySpotifyId :", err)
+        return reject(err)
+      }
+      resolve(results[0] || null)
+    })
+  })
+}
+
+
 module.exports = {
   createUser,
   findUserByEmail,
-  findUserById
+  findUserById,
+  findUserBySpotifyId
 }

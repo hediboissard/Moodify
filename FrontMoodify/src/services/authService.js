@@ -14,6 +14,14 @@ export const register = async (userData) => {
   return res.data
 }
 
+export const getSpotifyProfile = async (spotifyId) => {
+  if (!spotifyId) throw new Error('Spotify ID non fourni')
+
+  const res = await axios.get(`${API_BASE_URL}/users/me/spotify/${spotifyId}`)
+  return res.data
+}
+
+
 export const getProfile = async () => {
   const token = localStorage.getItem('token')
   if (!token) throw new Error('Token non disponible')

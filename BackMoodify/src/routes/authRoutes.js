@@ -45,18 +45,22 @@ router.get('/spotify/callback', async (req, res) => {
       headers: { Authorization: `Bearer ${accessToken}` },
     });
 
-    const { id: spotify_id, display_name, email } = userRes.data;
+    const { id: spotify_id, display_name, email, images } = userRes.data;
+    const avatar = userRes.data.images?.[0]?.url || null;
+
 
     const [existingUser] = await db.promise().query(
       'SELECT * FROM users WHERE spotify_id = ?',
       [spotify_id]
     );
 
+
+
     if (existingUser.length === 0) {
-      await db.promise().query(
-        'INSERT INTO users (email, username, spotify_id) VALUES (?, ?, ?)',
-        [email, display_name || 'Spotify User', spotify_id]
-      );
+        await db.promise().query(
+            'INSERT INTO users (email, username, spotify_id, avatar) VALUES (?, ?, ?, ?)',
+            [email, display_name || 'Spotify User', spotify_id, avatar]
+          );
     }
 
     // Redirige vers le frontend avec l'ID Spotify en paramètre
