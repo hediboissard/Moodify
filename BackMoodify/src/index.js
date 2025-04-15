@@ -1,17 +1,42 @@
-require('dotenv').config();
 const express = require('express');
+const cors = require('cors');
+const { getSongFromMood, getAvailableGenres } = require('./spotifyService');
+require('dotenv').config();
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-
-const db = require('./db');
-
+app.use(cors()); // autorise les appels depuis le front
 app.use(express.json());
 
+const userRoutes = require('./routes/userRoutes')
+const authRoutes = require('./routes/authRoutes')
+
+
+app.use('/api/auth', authRoutes)
+app.use('/api/users', userRoutes)
+
+
 app.get('/', (req, res) => {
-  res.send('Bienvenue sur le backend Moodify !');
+  res.send('Bienvenue sur le backend Node.js avec .env !');
+}
+);
+
+app.get('/mood/:score', async (req, res) => {
+  try {
+    const result = await getSongFromMood(req.params.score);
+    res.json(result);
+  } catch (err) {
+    console.error(err.response?.data || err);
+    res.status(500).json({ error: 'Erreur API Spotify' });
+  }
 });
 
+
+
+  
+
+
 app.listen(PORT, () => {
-  console.log(`🚀 Serveur lancé sur http://localhost:${PORT}`);
+  console.log(`Serveur backend en écoute sur http://localhost:${PORT}`);
 });
