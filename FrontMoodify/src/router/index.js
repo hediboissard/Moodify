@@ -4,7 +4,6 @@ import FriendsPage from "../views/FriendsPage.vue";
 import LoginPage from "../views/LoginPage.vue";
 import RegisterPage from '../views/RegisterPage.vue';
 import ProfilPage from '../views/ProfilPage.vue';
-import HomePage from "../views/HomePage.vue";
 
 const routes = [
   { path: "/", name: "Login", component: LoginPage },
