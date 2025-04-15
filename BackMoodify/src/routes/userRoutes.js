@@ -16,6 +16,7 @@ router.get("/me", authMiddleware, async (req, res) => {
     res.json({
       username: user.username,
       email: user.email,
+      avatar: user.avatar || null
     });
   } catch (err) {
     console.error("❌ Erreur dans /me :", err);
@@ -44,5 +45,27 @@ router.get("/me/spotify/:spotify_id", async (req, res) => {
     res.status(500).json({ message: "Erreur serveur" });
   }
 });
+
+// ✅ Mettre à jour l'avatar
+router.post(
+  '/avatar',
+  authMiddleware,
+  upload.single('avatar'),
+  async (req, res) => {
+    if (!req.file) {
+      return res.status(400).json({ message: 'Aucun fichier envoyé.' })
+    }
+
+    const avatarPath = `/uploads/${req.file.filename}`
+    try {
+      await User.updateAvatar(req.user.id, avatarPath)
+      res.json({ message: '✅ Avatar mis à jour avec succès', avatar: avatarPath })
+    } catch (err) {
+      console.error('❌ Erreur upload avatar :', err)
+      res.status(500).json({ message: 'Erreur serveur' })
+    }
+  }
+),
+
 
 module.exports = router;

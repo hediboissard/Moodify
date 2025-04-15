@@ -48,9 +48,8 @@
 
     <!-- 🔧 Actions -->
     <div class="mt-8 flex flex-col items-center space-y-4">
-      <!-- 🔴 Suppression de compte -->
-      <button class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-6 rounded-lg">
-        Account Delete
+      <button @click="deleteAccount" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-6 rounded-lg">
+        Delete Account
       </button>
 
       <!-- 🔒 Déconnexion -->
@@ -66,9 +65,12 @@ import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import Navbar from '@/components/Navbar.vue'
 import { getProfile, getSpotifyProfile } from '@/services/authService'
+import axios from 'axios'
 
-const user = ref({})
+const user = ref({ username: '', avatar: '' })
+const fileInput = ref(null)
 const isSpotifyUser = ref(false)
+
 const router = useRouter()
 
 // ✅ Récupération profil
