@@ -1,3 +1,4 @@
+// src/router/index.js
 import { createRouter, createWebHistory } from "vue-router";
 import HomePage from "../views/HomePage.vue";
 import FriendsPage from "../views/FriendsPage.vue";
@@ -8,16 +9,28 @@ import MoodTest from "../components/MoodTest.vue";
 
 const routes = [
   { path: "/", name: "Login", component: LoginPage },
-  { path: "/home", name: "Home", component: HomePage },
-  { path: "/friends", name: "Friends", component: FriendsPage },
   { path: "/register", name: "Register", component: RegisterPage },
-  { path: "/profil", name: "Profil", component: ProfilPage },
-  { path: "/moodTest", name: "Moodtest", component: MoodTest },
+  { path: "/home", name: "Home", component: HomePage, meta: { requiresAuth: true } },
+  { path: "/friends", name: "Friends", component: FriendsPage, meta: { requiresAuth: true } },
+  { path: "/profil", name: "Profil", component: ProfilPage, meta: { requiresAuth: true } }
 ];
 
 const router = createRouter({
   history: createWebHistory(),
   routes,
 });
+
+// 🔐 Navigation Guard
+router.beforeEach((to, from, next) => {
+  const isAuthenticated = !!localStorage.getItem('token')
+
+  if (to.meta.requiresAuth && !isAuthenticated) {
+    next({ name: 'Login' })
+  } else if ((to.name === 'Login' || to.name === 'Register') && isAuthenticated) {
+    next({ name: 'Home' })
+  } else {
+    next()
+  }
+})
 
 export default router;
