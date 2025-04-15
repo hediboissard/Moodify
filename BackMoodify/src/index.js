@@ -9,6 +9,9 @@ const PORT = process.env.PORT || 3000;
 app.use(cors()); // autorise les appels depuis le front
 app.use(express.json());
 
+app.use('/api/auth', authRoutes)
+
+
 app.get('/', (req, res) => {
   res.send('Bienvenue sur le backend Node.js avec .env !');
 }

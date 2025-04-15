@@ -1,0 +1,17 @@
+CREATE DATABASE IF NOT EXISTS moodify;
+USE moodify;
+
+DROP TABLE IF EXISTS users;
+
+CREATE TABLE users (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  email VARCHAR(191) NOT NULL UNIQUE,
+  password VARCHAR(255) NOT NULL,
+  username VARCHAR(100) NOT NULL,
+  name VARCHAR(100),
+  surname VARCHAR(100),  
+  birthdate DATE,         
+  spotify_id VARCHAR(255),
+  mood VARCHAR(50),
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
