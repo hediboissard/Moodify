@@ -4,6 +4,8 @@
 
     <Sidebar :open="showLeftSidebar" side="left" @toggle="showLeftSidebar = !showLeftSidebar">
       <p class="sidebar-title" @click="toggleLikedExpanded" style="cursor: pointer;">
+        <span v-if="likedExpanded">⬇️</span>
+        <span v-else>➡️</span>
         ❤️ Titres Likés
       </p>
       <div v-if="likedExpanded">
@@ -51,7 +53,9 @@
           <h3>{{ currentSong.title }}</h3>
           <p>{{ currentSong.artist }}</p>
         </div>
-        <button @click="likeCurrentTrack" class="like-button">❤️</button>
+        <button @click="toggleLikeCurrentTrack" class="like-button">
+          {{ isLiked(currentSong) ? '❤️' : '🤍' }}
+        </button>
       </div>
     </div>
 
@@ -116,9 +120,21 @@ async function fetchSongByMood() {
   }
 }
 
-function likeCurrentTrack() {
-  if (currentSong.value && !likedSongs.value.some(song => song.title === currentSong.value.title && song.artist === currentSong.value.artist)) {
-    likedSongs.value.push({ ...currentSong.value });
+function isLiked(song) {
+  return likedSongs.value.some(s => s.title === song.title && s.artist === song.artist);
+}
+
+function toggleLikeCurrentTrack() {
+  if (!currentSong.value) return;
+
+  const index = likedSongs.value.findIndex(
+    s => s.title === currentSong.value.title && s.artist === currentSong.value.artist
+  );
+
+  if (index !== -1) {
+    likedSongs.value.splice(index, 1); // Supprimer
+  } else {
+    likedSongs.value.push({ ...currentSong.value }); // Ajouter
   }
 }
 
@@ -242,6 +258,11 @@ function toggleLikedExpanded() {
   color: white;
   cursor: pointer;
   margin-left: auto;
+  transition: transform 0.2s ease;
+}
+
+.like-button:hover {
+  transform: scale(1.2);
 }
 
 .sidebar-title {
