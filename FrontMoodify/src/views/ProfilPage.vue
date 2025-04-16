@@ -1,27 +1,26 @@
 <template>
   <Navbar />
   <div class="bg-neutral-900 text-white flex flex-col items-center min-h-screen px-4 py-12">
-    <div class="mt-6">
+    <!-- 📸 Avatar -->
+    <div class="mt-6 relative">
+      <input type="file" ref="fileInput" @change="uploadAvatar" accept="image/*" class="hidden" />
       <img
-        :src="user?.avatar || 'https://www.svgrepo.com/show/382106/profile-avatar.svg'"
+        :src="user?.avatar ? `http://localhost:3000${user.avatar}` : 'https://www.svgrepo.com/show/382106/profile-avatar.svg'"
         alt="Profile"
-        class="w-32 h-32 rounded-full border-2 border-gray-600"
+        class="w-32 h-32 rounded-full border-2 border-gray-600 object-cover cursor-pointer"
+        @click="triggerFileInput"
       />
     </div>
 
-
-
     <!-- 🧑 Infos utilisateur -->
     <div class="mt-10 space-y-6 text-lg w-full max-w-md">
-      <!-- Username affiché -->
       <p><span class="font-bold">Username:</span> {{ user?.username || 'Inconnu' }}</p>
 
-      <!-- ℹ️ Message si user Spotify -->
       <p v-if="isSpotifyUser" class="text-gray-400 text-sm italic">
         Informations synchronisées avec Spotify — non modifiables.
       </p>
 
-      <!-- 🔤 Changement username (non Spotify uniquement) -->
+      <!-- 🔤 Username -->
       <div v-if="!isSpotifyUser">
         <input
           type="text"
@@ -30,7 +29,7 @@
         />
       </div>
 
-      <!-- 🔑 Changement mot de passe (non Spotify uniquement) -->
+      <!-- 🔑 Mot de passe -->
       <div v-if="!isSpotifyUser">
         <p><span class="font-bold">Change Password:</span></p>
         <input
@@ -48,12 +47,17 @@
 
     <!-- 🔧 Actions -->
     <div class="mt-8 flex flex-col items-center space-y-4">
-      <button @click="deleteAccount" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-6 rounded-lg">
+      <button
+        @click="deleteAccount"
+        class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-6 rounded-lg"
+      >
         Delete Account
       </button>
 
-      <!-- 🔒 Déconnexion -->
-      <button @click="handleLogout" class="bg-gray-700 hover:bg-gray-800 text-white font-bold py-2 px-6 rounded-lg">
+      <button
+        @click="handleLogout"
+        class="bg-gray-700 hover:bg-gray-800 text-white font-bold py-2 px-6 rounded-lg"
+      >
         Log out
       </button>
     </div>
@@ -70,7 +74,6 @@ import axios from 'axios'
 const user = ref({ username: '', avatar: '' })
 const fileInput = ref(null)
 const isSpotifyUser = ref(false)
-
 const router = useRouter()
 
 // ✅ Récupération profil
@@ -96,7 +99,7 @@ const triggerFileInput = () => {
   fileInput.value?.click()
 }
 
-// 📤 Envoi de l'avatar
+// 📤 Upload avatar
 const uploadAvatar = async (event) => {
   const file = event.target.files[0]
   if (!file) return
@@ -128,6 +131,26 @@ const handleLogout = () => {
     localStorage.removeItem('spotify_id')
     localStorage.removeItem('user')
     router.push('/')
+  }
+}
+
+// ❌ Supprimer le compte utilisateur
+const deleteAccount = async () => {
+  if (!confirm("⚠️ Cette action est irréversible. Supprimer votre compte ?")) return
+
+  try {
+    const token = localStorage.getItem('token')
+    await axios.delete('http://localhost:3000/api/users/delete', {
+      headers: { Authorization: `Bearer ${token}` }
+    })
+
+    alert("✅ Compte supprimé avec succès.")
+    localStorage.removeItem('token')
+    localStorage.removeItem('spotify_id')
+    router.push('/')
+  } catch (err) {
+    console.error("❌ Erreur lors de la suppression du compte :", err)
+    alert("Une erreur est survenue lors de la suppression.")
   }
 }
 </script>

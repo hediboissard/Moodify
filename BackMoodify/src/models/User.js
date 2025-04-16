@@ -63,16 +63,14 @@ const updateAvatar = (id, avatarPath) => {
 // ❌ Supprimer un utilisateur
 const deleteUser = (id) => {
   return new Promise((resolve, reject) => {
-    const sql = 'DELETE FROM users WHERE id = ?'
+    const sql = 'DELETE FROM users WHERE id = ?';
     db.query(sql, [id], (err, result) => {
-      if (err) {
-        console.error("❌ Erreur SQL dans deleteUser :", err)
-        return reject(err)
-      }
-      resolve(result)
-    })
-  })
-}
+      if (err) return reject(err);
+      resolve(result);
+    });
+  });
+};
+
 
 // 🔍 Trouver un utilisateur par Spotify ID
 const findUserBySpotifyId = (spotifyId) => {
@@ -87,6 +85,8 @@ const findUserBySpotifyId = (spotifyId) => {
     })
   })
 }
+
+
 
 
 module.exports = {
