@@ -27,7 +27,10 @@
                 Ouvrir dans Spotify
               </a>
 
-              <!-- Placeholder pour "Ajouter à une playlist" -->
+              <button class="dropdown-link" @click="openPlaylistPopup(song)">
+                <img src="../../public/logo_spotify.svg" alt="Add" class="dropdown-icon" />
+                Ajouter à une playlist
+              </button>
             </div>
           </div>
           <button @click="removeLiked(song)" class="delike-btn">❌</button>
@@ -178,6 +181,11 @@ const openMenuIndex = ref(null)
 function toggleMenu(index) {
   openMenuIndex.value = openMenuIndex.value === index ? null : index
 }
+
+function openPlaylistPopup(song) {
+  console.log("🎶 Ajout à une playlist :", song.title)
+}
+
 
 
 
@@ -642,9 +650,13 @@ watch(
   display: flex;
   align-items: center;
   color: white;
+  background: none;
+  border: none;
   text-decoration: none;
   padding: 4px 8px;
   gap: 8px;
+  font-size: 14px;
+  cursor: pointer;
   transition: background 0.2s ease;
 }
 
@@ -652,6 +664,7 @@ watch(
   background-color: #333;
   border-radius: 4px;
 }
+
 
 .dropdown-icon {
   width: 16px;
