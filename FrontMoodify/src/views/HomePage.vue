@@ -786,12 +786,13 @@ watch(
 
 .playlist-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
   gap: 20px;
-  margin-top: 10px;
+  justify-items: center;
 }
 
 .playlist-card {
+  width: 140px;
   background-color: #2a2a2a;
   border-radius: 10px;
   overflow: hidden;
@@ -821,6 +822,7 @@ watch(
   text-align: center;
   color: #ddd;
 }
+
 
 .close-btn {
   margin-top: 20px;
