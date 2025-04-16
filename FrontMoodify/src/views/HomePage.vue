@@ -77,6 +77,11 @@ import { ref, computed, onMounted, watch } from 'vue'
 import Navbar from '@/components/Navbar.vue'
 import MusicPlayer from '@/components/MusicPlayer.vue'
 import Sidebar from '@/components/Sidebar.vue'
+import { saveLikedTrack, getLikedTracks, removeLikedTrack } from '@/services/likeService'
+import { useToast } from 'vue-toastification'
+const toast = useToast()
+
+
 
 
 const showLeftSidebar = ref(false)
@@ -154,19 +159,39 @@ function isLiked(song) {
   return likedSongs.value.some(s => s.title === song.title && s.artist === song.artist)
 }
 
-function toggleLikeCurrentTrack() {
-  if (!currentSong.value) return
+
+
+async function toggleLikeCurrentTrack() {
+  if (!currentSong.value) return;
 
   const index = likedSongs.value.findIndex(
     s => s.title === currentSong.value.title && s.artist === currentSong.value.artist
-  )
+  );
 
   if (index !== -1) {
-    likedSongs.value.splice(index, 1)
+    const removedTrack = likedSongs.value.splice(index, 1)[0];
+    try {
+      await removeLikedTrack(removedTrack);
+      console.log("🗑️ Titre supprimé de la BDD :", removedTrack.title);
+      toast.info(`🗑️ « ${removedTrack.title} » supprimé des favoris`);
+    } catch (err) {
+      console.error('❌ Erreur lors de la suppression du like :', err);
+      toast.error("Erreur lors de la suppression du like");
+    }
   } else {
-    likedSongs.value.push({ ...currentSong.value })
+    likedSongs.value.push({ ...currentSong.value });
+    try {
+      const res = await saveLikedTrack(currentSong.value);
+      console.log("✅ Titre liké enregistré dans la BDD :", currentSong.value.title, res);
+      toast.success(`❤️ « ${currentSong.value.title} » ajouté aux favoris`);
+    } catch (err) {
+      console.error('❌ Erreur en sauvegardant le like :', err);
+      toast.error("Erreur lors de l'enregistrement du like");
+    }
   }
 }
+
+
 
 function toggleLikedExpanded() {
   likedExpanded.value = !likedExpanded.value
@@ -178,32 +203,16 @@ onMounted(() => {
   script.onload = () => {
     window.particlesJS('particles-js', {
       particles: {
-        number: {
-          value: 1000,
-          density: {
-            enable: true,
-            value_area: 800
-          }
-        },
+        number: { value: 1000, density: { enable: true, value_area: 800 } },
         color: { value: '#00ff88' },
         shape: {
           type: 'circle',
           stroke: { width: 0, color: '#000000' },
           polygon: { nb_sides: 5 }
         },
-        opacity: {
-          value: 0.5,
-          random: true,
-          anim: { enable: false }
-        },
-        size: {
-          value: 2,
-          random: true,
-          anim: { enable: false }
-        },
-        line_linked: {
-          enable: false
-        },
+        opacity: { value: 0.5, random: true, anim: { enable: false } },
+        size: { value: 2, random: true, anim: { enable: false } },
+        line_linked: { enable: false },
         move: {
           enable: true,
           speed: 1,
@@ -215,14 +224,8 @@ onMounted(() => {
       interactivity: {
         detect_on: 'canvas',
         events: {
-          onhover: {
-            enable: true,
-            mode: 'bubble'
-          },
-          onclick: {
-            enable: true,
-            mode: 'push'
-          },
+          onhover: { enable: true, mode: 'bubble' },
+          onclick: { enable: true, mode: 'push' },
           resize: true
         },
         modes: {
@@ -233,16 +236,25 @@ onMounted(() => {
             opacity: 0,
             speed: 3
           },
-          push: {
-            particles_nb: 4
-          }
+          push: { particles_nb: 4 }
         }
       },
       retina_detect: true
     })
   }
   document.head.appendChild(script)
+
+  const fetchLikedSongs = async () => {
+    try {
+      likedSongs.value = await getLikedTracks()
+    } catch (err) {
+      console.error('❌ Erreur lors du chargement des titres likés :', err)
+    }
+  }
+
+  fetchLikedSongs()
 })
+
 
 watch(
   () => currentMood.value.color,
