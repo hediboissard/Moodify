@@ -2,10 +2,8 @@
     <nav class="navbar">
       <router-link to="/home" class="logo">
         <img src="@/assets/logo.png" alt="Logo" class="logo-img" />
-        <span>Moodify</span>
+        <span id="moodify">Moodify</span>
       </router-link>
-  
-      <input type="text" placeholder="Rechercher..." class="search-input" />
   
       <div class="links">
         <router-link
@@ -43,7 +41,7 @@
   <style scoped>
   .navbar {
     height: 10vh;
-    background-color: #2c2c2c;
+    background-color: #0e0e0ed1;
     padding: 1rem 2rem;
     display: flex;
     align-items: center;

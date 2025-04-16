@@ -6,17 +6,16 @@ let accessToken;
 let tokenExpiresAt = 0;
 
 const moodToPlaylist = {
-  0: "66mlVn4GNwwbpJZrE8XuGi",
-  1: "66mlVn4GNwwbpJZrE8XuGi",
-  2: "37i9dQZF1DWVV27DiNWxkR",
-  3: "37i9dQZF1DX3YSRoSdA634",
-  4: "37i9dQZF1DX3csziQj0d5b",
-  5: "4quQa2RBA1PbNMaJGEXvWA",
-  6: "1llkez7kiZtBeOw5UjFlJq",
-  7: "6mGhgb5BFsmxEWDHMjCQ1S",
-  8: "37i9dQZF1DX3rxVfibe1L0",
-  9: "1h90L3LP8kAJ7KGjCV2Xfd",
-  10: "37i9dQZF1DX7KNKjOK0o75",
+  1: "4z6eXTMEaSgSApVzYbUqWp", // Productif ✅  //ok
+  2: "6nS31wmspvazxjq3jrhGMO", // Nostalgique 🌅  //ok
+  3: "7i5yMpg2Rp44B4Jovm4BBm", // Amoureux 💘 //ok
+  4: "7JabddFr3Q6JPsND4v9Swf", // Chill ☕ //ok
+  5: "3czbpPlUYmNKbLf5RphdjY", // Sport 🏋️ //ok
+  6: "35hasVCmKv52Va0wWLo4UK", // Créatif 🎨 //ok
+  7: "6xwCH60hsGvo2tLk1j07Ud", // Cocooning 🕯️ //ok
+  8: "31JFVuGL18xiuhTfEutoW1", // Gamer 🎮 //ok
+  9: "30WyFX7yixNvPqecVwzjwg", // Fêtard 🎉 //ok
+  10: "7jkxvMgEo8WZwZTRJKiMja", // Mélancolique 🌧️ //ok
 };
 
 function getPlaylistIdFromMood(mood) {
@@ -56,35 +55,39 @@ async function getSongsFromMood(score) {
       `https://api.spotify.com/v1/playlists/${playlistId}/tracks`,
       {
         headers: { Authorization: `Bearer ${accessToken}` },
-        params: { limit: 50 },
+        params: { limit: 20 },
       }
     );
 
-    const items = res.data.items.map(item => item.track).filter(Boolean);
+    const items = res.data.items.map((item) => item.track).filter(Boolean);
 
-    const results = await Promise.all(items.map(async (track) => {
-      let preview_url = track.preview_url;
+    const results = await Promise.all(
+      items.map(async (track) => {
+        let preview_url = track.preview_url;
 
-      if (!preview_url) {
-        const query = `${track.name} ${track.artists[0].name}`;
-        try {
-          const result = await findPreview(query, 1);
-          preview_url = result.success ? result.results[0].previewUrls[0] ?? null : null;
-        } catch (err) {
-          preview_url = null;
+        if (!preview_url) {
+          const query = `${track.name} ${track.artists[0].name}`;
+          try {
+            const result = await findPreview(query, 1);
+            preview_url = result.success
+              ? result.results[0].previewUrls[0] ?? null
+              : null;
+          } catch (err) {
+            preview_url = null;
+          }
         }
-      }
 
-      return {
-        title: track.name,
-        artist: track.artists[0].name,
-        image: track.album.images[0]?.url || null,
-        preview_url,
-        spotify_url: track.external_urls.spotify,
-      };
-    }));
+        return {
+          title: track.name,
+          artist: track.artists[0].name,
+          image: track.album.images[0]?.url || null,
+          preview_url,
+          spotify_url: track.external_urls.spotify,
+        };
+      })
+    );
 
-    return results.filter(track => track.preview_url);
+    return results.filter((track) => track.preview_url);
   } catch (err) {
     console.error("❌ Erreur dans getSongsFromMood:", err.stack || err.message);
     throw new Error("Erreur lors de la récupération des musiques.");
