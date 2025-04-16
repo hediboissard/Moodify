@@ -300,7 +300,6 @@ watch(
 }
 
 .sbar {
-  border: solid 4px #1e1e1e;
   width: 80%;
   margin: 30px 10px;
   height: 50vh;
