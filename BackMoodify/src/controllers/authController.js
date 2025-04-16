@@ -2,7 +2,6 @@ const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 const User = require('../models/User')
 
-// ✅ REGISTER
 const register = async (req, res) => {
   const { email, password, username } = req.body
 
@@ -41,7 +40,6 @@ const login = async (req, res) => {
       return res.status(401).json({ message: "Mot de passe incorrect" })
     }
 
-    // 🎟️ Génère le token JWT
     const token = jwt.sign(
       { id: user.id, email: user.email },
       process.env.JWT_SECRET || "moodifysupersecret",

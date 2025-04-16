@@ -3,7 +3,6 @@ const router = express.Router();
 const authMiddleware = require("../middleware/authMiddleware");
 const db = require("../db");
 const User = require("../models/User");
-const upload = require("../middleware/upload");
 
 // Route avec token (utilisateur classique)
 router.get("/me", authMiddleware, async (req, res) => {
@@ -46,26 +45,19 @@ router.get("/me/spotify/:spotify_id", async (req, res) => {
   }
 });
 
-// ✅ Mettre à jour l'avatar
-router.post(
-  '/avatar',
-  authMiddleware,
-  upload.single('avatar'),
-  async (req, res) => {
-    if (!req.file) {
-      return res.status(400).json({ message: 'Aucun fichier envoyé.' })
-    }
 
-    const avatarPath = `/uploads/${req.file.filename}`
-    try {
-      await User.updateAvatar(req.user.id, avatarPath)
-      res.json({ message: '✅ Avatar mis à jour avec succès', avatar: avatarPath })
-    } catch (err) {
-      console.error('❌ Erreur upload avatar :', err)
-      res.status(500).json({ message: 'Erreur serveur' })
-    }
+
+// ✅ Route pour supprimer un utilisateur
+router.delete('/delete', authMiddleware, async (req, res) => {
+  try {
+    const userId = req.user.id;
+    await User.deleteUserById(userId); // ✅ utilise le bon nom de fonction
+    res.json({ message: '✅ Compte supprimé avec succès.' });
+  } catch (err) {
+    console.error("❌ Erreur suppression compte :", err);
+    res.status(500).json({ message: "Erreur lors de la suppression du compte" });
   }
-),
+});
 
 // Get all users
 router.get('/', async (req, res) => {
