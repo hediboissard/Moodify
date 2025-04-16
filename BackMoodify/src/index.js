@@ -1,7 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
-const { getSongFromMood } = require('./spotifyService');
+const { getSongsFromMood } = require('./spotifyService');
 require('dotenv').config();
 
 const app = express();
@@ -24,13 +24,14 @@ app.use('/api/users', userRoutes);
 // 🎵 Route Spotify
 app.get('/mood/:score', async (req, res) => {
   try {
-    const result = await getSongFromMood(req.params.score);
-    res.json(result);
+    const songs = await getSongsFromMood(req.params.score);
+    res.json(songs);
   } catch (err) {
-    console.error(err.response?.data || err);
+    console.error(err);
     res.status(500).json({ error: 'Erreur API Spotify' });
   }
 });
+
 
 // 🌐 Route de base
 app.get('/', (req, res) => {
