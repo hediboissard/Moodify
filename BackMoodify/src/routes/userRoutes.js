@@ -67,5 +67,17 @@ router.post(
   }
 ),
 
+// Get all users
+router.get('/', async (req, res) => {
+  try {
+    const [users] = await db.promise().query(
+      "SELECT id, username, mood, avatar FROM users"
+    );
+    res.json(users);
+  } catch (err) {
+    console.error("Error fetching users:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
 
 module.exports = router;
