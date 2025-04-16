@@ -43,7 +43,7 @@
   <style scoped>
   .navbar {
     height: 10vh;
-    background-color: #2c2c2c;
+    background-color: #0e0e0ed1;
     padding: 1rem 2rem;
     display: flex;
     align-items: center;
