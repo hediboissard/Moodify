@@ -51,6 +51,9 @@
 import { ref, computed, onMounted } from 'vue'
 import Navbar from '@/components/Navbar.vue'
 import axios from 'axios'
+import { useToast } from 'vue-toastification'
+
+const toast = useToast()
 
 const users = ref([])
 const searchQuery = ref('')
@@ -81,32 +84,33 @@ onMounted(() => {
 
 // Ajouter une fonction pour stocker les amis localement
 const addFriend = (user) => {
-  // Récupérer les amis existants du localStorage
   const storedFriends = localStorage.getItem('friends')
   let friends = storedFriends ? JSON.parse(storedFriends) : []
   
-  // Vérifier si l'utilisateur n'est pas déjà ami
   if (!friends.some(friend => friend.id === user.id)) {
-    // Créer un objet ami avec les informations nécessaires
     const newFriend = {
       id: user.id,
       username: user.username,
       avatar: user.avatar || 'https://www.svgrepo.com/show/382106/profile-avatar.svg',
-      moodEmoji: '😊', // Emoji par défaut
-      moodText: 'Feeling good', // Texte par défaut
-      currentTrack: 'No track playing' // Track par défaut
+      moodEmoji: '😊',
+      moodText: 'Feeling good',
+      currentTrack: 'No track playing'
     }
     
-    // Ajouter le nouvel ami
     friends.push(newFriend)
-    
-    // Sauvegarder dans localStorage
     localStorage.setItem('friends', JSON.stringify(friends))
     
-    // Afficher une notification
-    alert(`${user.username} ajouté aux amis!`)
+    // Remplacer l'alert par un toast de succès
+    toast.success(`👥 ${user.username} a été ajouté à vos amis !`, {
+      timeout: 3000,
+      position: "bottom-right",
+    })
   } else {
-    alert('Cet utilisateur est déjà dans vos amis!')
+    // Remplacer l'alert par un toast d'information
+    toast.info(`${user.username} est déjà dans vos amis !`, {
+      timeout: 3000,
+      position: "bottom-right",
+    })
   }
 }
 </script>

@@ -44,6 +44,13 @@
           <p class="friend-mood">{{ friend.moodEmoji }} {{ friend.moodText }}</p>
           <p class="friend-track">🎵 {{ friend.currentTrack }}</p>
         </div>
+        <button 
+          @click="removeFriend(friend)" 
+          class="remove-friend-btn"
+          title="Retirer cet ami"
+        >
+          ❌
+        </button>
       </div>
     </Sidebar>
 
@@ -245,7 +252,31 @@ const fetchFriends = async () => {
   }
 }
 
-
+const removeFriend = (friend) => {
+  try {
+    // Récupérer les amis actuels du localStorage
+    const storedFriends = localStorage.getItem('friends')
+    let friends = storedFriends ? JSON.parse(storedFriends) : []
+    
+    // Filtrer pour retirer l'ami
+    friends = friends.filter(f => f.id !== friend.id)
+    
+    // Mettre à jour le localStorage
+    localStorage.setItem('friends', JSON.stringify(friends))
+    
+    // Mettre à jour l'état local
+    fetchFriends()
+    
+    // Changer le toast.success en toast.error pour avoir la notification en rouge
+    toast.error(`❌ ${friend.username} a été retiré de vos amis`, {
+      timeout: 3000,
+      position: "bottom-right",
+    })
+  } catch (error) {
+    console.error('❌ Erreur lors de la suppression de l\'ami:', error)
+    toast.error("Erreur lors de la suppression de l'ami")
+  }
+}
 
 onMounted(() => {
   const script = document.createElement('script')
@@ -622,6 +653,7 @@ watch(
   padding: 0.5rem;
   background-color: #2a2a2a;
   border-radius: 8px;
+  position: relative;  /* Ajoutez cette ligne si pas déjà présente */
 }
 
 .friend-avatar {
@@ -661,6 +693,24 @@ watch(
 .dropdown-icon {
   width: 16px;
   height: 16px;
+}
+
+.remove-friend-btn {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+  opacity: 0.7;
+  transition: all 0.2s ease;
+}
+
+.remove-friend-btn:hover {
+  opacity: 1;
+  transform: translateY(-50%) scale(1.1);
 }
 
 </style>
