@@ -70,13 +70,14 @@ router.post(
 // ✅ Route pour supprimer un utilisateur
 router.delete('/delete', authMiddleware, async (req, res) => {
   try {
-    const userId = req.user.id
-    await User.deleteUser(userId)
-    res.json({ message: '✅ Compte supprimé avec succès.' })
+    const userId = req.user.id;
+    await User.deleteUserById(userId); // ✅ utilise le bon nom de fonction
+    res.json({ message: '✅ Compte supprimé avec succès.' });
   } catch (err) {
-    console.error("❌ Erreur suppression compte :", err)
-    res.status(500).json({ message: "Erreur lors de la suppression du compte" })
+    console.error("❌ Erreur suppression compte :", err);
+    res.status(500).json({ message: "Erreur lors de la suppression du compte" });
   }
-}),
+});
+
 
 module.exports = router;
