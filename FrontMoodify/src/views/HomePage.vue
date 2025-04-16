@@ -28,7 +28,6 @@
               </a>
 
               <button class="dropdown-link" @click="openPlaylistPopup(song)">
-                <img src="../../public/logo_spotify.svg" alt="Add" class="dropdown-icon" />
                 Ajouter à une playlist
               </button>
             </div>
@@ -84,6 +83,29 @@
       :onPrev="playPrevious"
       :onNext="playNext"
     />
+
+    <!-- 🎵 Popup d'ajout à une playlist -->
+<div v-if="showPlaylistModal" class="modal-overlay" @click.self="closePlaylistPopup">
+  <div class="modal-content">
+    <h3>Ajouter à une playlist</h3>
+    <div class="playlist-grid" v-if="userPlaylists.length > 0">
+  <div
+    v-for="playlist in userPlaylists"
+    :key="playlist.id"
+    class="playlist-card"
+    @click="addTrackToPlaylist(playlist.id)"
+  >
+    <img :src="playlist.images?.[0]?.url || defaultImage" class="playlist-image" />
+    <div class="playlist-name">{{ playlist.name }}</div>
+  </div>
+</div>
+
+    <p v-else>Aucune playlist trouvée.</p>
+    <button class="close-btn" @click="closePlaylistPopup">Fermer</button>
+  </div>
+</div>
+
+
   </div>
 </template>
 
@@ -97,6 +119,10 @@ import { saveLikedTrack, getLikedTracks, removeLikedTrack } from '@/services/lik
 import { useToast } from 'vue-toastification'
 const toast = useToast()
 
+const showPlaylistModal = ref(false)
+const userPlaylists = ref([])
+const selectedTrack = ref(null)
+const defaultImage = '/default_playlist_cover.png'
 
 
 
@@ -182,8 +208,67 @@ function toggleMenu(index) {
   openMenuIndex.value = openMenuIndex.value === index ? null : index
 }
 
-function openPlaylistPopup(song) {
-  console.log("🎶 Ajout à une playlist :", song.title)
+async function openPlaylistPopup(song) {
+  // Si le champ spotify_uri n'existe pas, on le dérive depuis l'URL
+  const uri = song.spotify_uri || (
+    song.spotify_url?.includes('/track/')
+      ? `spotify:track:${song.spotify_url.split('/track/')[1].split('?')[0]}`
+      : null
+  )
+
+  if (!uri) {
+    toast.error("URI Spotify introuvable pour ce morceau")
+    return
+  }
+
+  // On stocke la track avec la bonne URI
+  selectedTrack.value = { ...song, spotify_uri: uri }
+  showPlaylistModal.value = true
+
+  const accessToken = localStorage.getItem('access_token')
+  if (!accessToken) return toast.error("Pas de token Spotify")
+
+  try {
+    const res = await axios.get('https://api.spotify.com/v1/me/playlists', {
+      headers: {
+        Authorization: `Bearer ${accessToken}`
+      }
+    })
+    userPlaylists.value = res.data.items
+  } catch (err) {
+    console.error("❌ Erreur récupération playlists :", err)
+    toast.error("Erreur récupération des playlists")
+  }
+}
+
+function closePlaylistPopup() {
+  showPlaylistModal.value = false
+  selectedTrack.value = null
+}
+
+async function addTrackToPlaylist(playlistId) {
+  const accessToken = localStorage.getItem('access_token')
+  if (!accessToken) return toast.error("Pas de token Spotify")
+
+  const uri = selectedTrack.value?.spotify_uri
+  if (!uri) return toast.error("URI manquante pour ce morceau")
+
+  try {
+    await axios.post(
+      `https://api.spotify.com/v1/playlists/${playlistId}/tracks`,
+      { uris: [uri] },
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`
+        }
+      }
+    )
+    toast.success(`🎶 « ${selectedTrack.value.title} » ajouté à la playlist !`)
+    closePlaylistPopup()
+  } catch (err) {
+    console.error("❌ Erreur ajout à la playlist :", err)
+    toast.error("Erreur ajout du morceau")
+  }
 }
 
 
@@ -670,5 +755,85 @@ watch(
   width: 16px;
   height: 16px;
 }
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.modal-content {
+  background: #1e1e1e;
+  padding: 20px;
+  border-radius: 12px;
+  width: 80%;
+  max-width: 900px;
+  color: white;
+}
+
+.modal-content h3 {
+  margin-bottom: 20px;
+  font-size: 1.5rem;
+  text-align: center;
+}
+
+.playlist-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 20px;
+  margin-top: 10px;
+}
+
+.playlist-card {
+  background-color: #2a2a2a;
+  border-radius: 10px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 10px;
+}
+
+.playlist-card:hover {
+  transform: scale(1.05);
+  background-color: #333;
+}
+
+.playlist-card img {
+  width: 100%;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 6px;
+}
+
+.playlist-card span {
+  margin-top: 8px;
+  font-size: 14px;
+  text-align: center;
+  color: #ddd;
+}
+
+.close-btn {
+  margin-top: 20px;
+  background: transparent;
+  border: 1px solid #fff;
+  color: white;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  display: block;
+  margin-left: auto;
+}
+
+
 
 </style>
