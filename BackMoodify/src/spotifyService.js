@@ -55,7 +55,7 @@ async function getSongsFromMood(score) {
       `https://api.spotify.com/v1/playlists/${playlistId}/tracks`,
       {
         headers: { Authorization: `Bearer ${accessToken}` },
-        params: { limit: 10 },
+        params: { limit: 20 },
       }
     );
 
