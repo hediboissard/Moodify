@@ -3,12 +3,16 @@
     <Navbar />
 
     <Sidebar :open="showLeftSidebar" side="left" @toggle="showLeftSidebar = !showLeftSidebar">
-      <p class="sidebar-title">🎵 Bibliothèques</p>
-      <div v-for="i in 5" :key="i" class="track-item">
-        <img src="../assets/logo.png" class="track-cover" alt="cover" />
-        <div class="track-info">
-          <h4>Titre {{ i }}</h4>
-          <p>Artiste Démo</p>
+      <p class="sidebar-title" @click="toggleLikedExpanded" style="cursor: pointer;">
+        ❤️ Titres Likés
+      </p>
+      <div v-if="likedExpanded">
+        <div v-for="(song, index) in likedSongs" :key="'liked-' + index" class="track-item">
+          <img :src="song.image" class="track-cover" alt="cover" />
+          <div class="track-info">
+            <h4>{{ song.title }}</h4>
+            <p>{{ song.artist }}</p>
+          </div>
         </div>
       </div>
     </Sidebar>
@@ -48,6 +52,7 @@
           <h3>{{ currentSong.title }}</h3>
           <p>{{ currentSong.artist }}</p>
         </div>
+        <button @click="likeCurrentTrack" class="like-button">❤️</button>
       </div>
     </div>
 
@@ -56,8 +61,6 @@
       :onPrev="playPrevious"
       :onNext="playNext"
     />
-
-
   </div>
 </template>
 
@@ -71,6 +74,10 @@ const showLeftSidebar = ref(false);
 const showRightSidebar = ref(false);
 const sliderValue = ref(0);
 const currentSong = ref(null);
+const songs = ref([]);
+const currentIndex = ref(0);
+const likedSongs = ref([]);
+const likedExpanded = ref(true);
 
 const moods = [
   {
@@ -152,12 +159,39 @@ async function fetchSongByMood() {
   try {
     const level = sliderToMoodLevel();
     const res = await fetch(`http://localhost:3000/mood/${level}`);
-    currentSong.value = await res.json();
+    songs.value = await res.json();
+    currentIndex.value = 0;
+    currentSong.value = songs.value[0];
   } catch (err) {
     console.error('❌ Erreur fetch mood:', err);
   }
 }
+
+function playNext() {
+  if (currentIndex.value < songs.value.length - 1) {
+    currentIndex.value++;
+    currentSong.value = songs.value[currentIndex.value];
+  }
+}
+
+function playPrevious() {
+  if (currentIndex.value > 0) {
+    currentIndex.value--;
+    currentSong.value = songs.value[currentIndex.value];
+  }
+}
+
+function likeCurrentTrack() {
+  if (currentSong.value && !likedSongs.value.some(song => song.title === currentSong.value.title && song.artist === currentSong.value.artist)) {
+    likedSongs.value.push({ ...currentSong.value });
+  }
+}
+
+function toggleLikedExpanded() {
+  likedExpanded.value = !likedExpanded.value;
+}
 </script>
+
 
 <style scoped>
 .home {
@@ -210,19 +244,6 @@ async function fetchSongByMood() {
   transition: background 0.3s;
   margin-top: 10px;
 }
-
-.slider::-webkit-slider-thumb {
--webkit-appearance: none;
-appearance: none;
-width: 24px;
-height: 24px;
-border: 2px solid #00ff88;
-border-radius: 50%;
-box-shadow: 0 0 10px #00ff88;
-cursor: pointer;
-transition: transform 0.2s ease;
-}
-
 
 .slider::-webkit-slider-thumb {
   -webkit-appearance: none;
@@ -280,8 +301,13 @@ transition: transform 0.2s ease;
   color: #ccc;
 }
 
-.audio {
-  margin-top: 0.5rem;
+.like-button {
+  background: none;
+  border: none;
+  font-size: 24px;
+  color: white;
+  cursor: pointer;
+  margin-left: auto;
 }
 
 .sidebar-title {
