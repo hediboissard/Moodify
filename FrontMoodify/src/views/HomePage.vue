@@ -73,6 +73,8 @@ const showLeftSidebar = ref(false);
 const showRightSidebar = ref(false);
 const sliderValue = ref(0);
 const currentSong = ref(null);
+const songs = ref([]);
+const currentIndex = ref(0);
 const likedSongs = ref([]);
 const likedExpanded = ref(true);
 
@@ -110,9 +112,25 @@ async function fetchSongByMood() {
   try {
     const level = sliderToMoodLevel();
     const res = await fetch(`http://localhost:3000/mood/${level}`);
-    currentSong.value = await res.json();
+    songs.value = await res.json();
+    currentIndex.value = 0;
+    currentSong.value = songs.value[0];
   } catch (err) {
     console.error('❌ Erreur fetch mood:', err);
+  }
+}
+
+function playNext() {
+  if (currentIndex.value < songs.value.length - 1) {
+    currentIndex.value++;
+    currentSong.value = songs.value[currentIndex.value];
+  }
+}
+
+function playPrevious() {
+  if (currentIndex.value > 0) {
+    currentIndex.value--;
+    currentSong.value = songs.value[currentIndex.value];
   }
 }
 
@@ -126,6 +144,7 @@ function toggleLikedExpanded() {
   likedExpanded.value = !likedExpanded.value;
 }
 </script>
+
 
 <style scoped>
 .home {
