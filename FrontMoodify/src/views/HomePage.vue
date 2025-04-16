@@ -65,7 +65,8 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
+import axios from 'axios';
 import Navbar from '@/components/Navbar.vue';
 import MusicPlayer from '@/components/MusicPlayer.vue';
 import Sidebar from '@/components/Sidebar.vue';
@@ -78,6 +79,7 @@ const songs = ref([]);
 const currentIndex = ref(0);
 const likedSongs = ref([]);
 const likedExpanded = ref(true);
+const friends = ref([]);
 
 const moods = [
   {
@@ -190,6 +192,20 @@ function likeCurrentTrack() {
 function toggleLikedExpanded() {
   likedExpanded.value = !likedExpanded.value;
 }
+
+const fetchFriends = async () => {
+  try {
+    const currentUserId = localStorage.getItem('userId')
+    const response = await axios.get(`http://localhost:3000/api/friends/${currentUserId}`)
+    friends.value = response.data
+  } catch (error) {
+    console.error('❌ Erreur lors de la récupération des amis:', error)
+  }
+}
+
+onMounted(() => {
+  fetchFriends()
+})
 </script>
 
 

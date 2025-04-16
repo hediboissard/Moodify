@@ -1,4 +1,3 @@
-
 CREATE DATABASE IF NOT EXISTS moodify;
 
 USE moodify;
@@ -15,4 +14,14 @@ CREATE TABLE users (
   mood VARCHAR(50),
   avatar VARCHAR(255),
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS friends (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  userId INT NOT NULL,
+  friendId INT NOT NULL,
+  createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (userId) REFERENCES users(id) ON DELETE CASCADE,
+  FOREIGN KEY (friendId) REFERENCES users(id) ON DELETE CASCADE,
+  UNIQUE KEY unique_friendship (userId, friendId)
 );
