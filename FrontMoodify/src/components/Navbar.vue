@@ -2,10 +2,8 @@
     <nav class="navbar">
       <router-link to="/home" class="logo">
         <img src="@/assets/logo.png" alt="Logo" class="logo-img" />
-        <span>Moodify</span>
+        <span id="moodify">Moodify</span>
       </router-link>
-  
-      <input type="text" placeholder="Rechercher..." class="search-input" />
   
       <div class="links">
         <router-link
