@@ -14,6 +14,7 @@ app.use(express.json());
 // 📂 Servir les fichiers uploadés
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
+
 // 🧩 Routes
 const userRoutes = require('./routes/userRoutes');
 const authRoutes = require('./routes/authRoutes');

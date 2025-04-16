@@ -19,6 +19,18 @@
             <h4>{{ song.title }}</h4>
             <p>{{ song.artist }}</p>
           </div>
+          <div class="menu-wrapper">
+            <button class="more-btn" @click="toggleMenu(index)">⋯</button>
+            <div v-if="openMenuIndex === index" class="dropdown-menu">
+              <a :href="song.spotify_url" target="_blank" class="dropdown-link">
+                <img src="../../public/logo_spotify.svg" alt="Spotify" class="dropdown-icon" />
+                Ouvrir dans Spotify
+              </a>
+
+              <!-- Placeholder pour "Ajouter à une playlist" -->
+            </div>
+          </div>
+          <button @click="removeLiked(song)" class="delike-btn">❌</button>
         </div>
       </div>
     </Sidebar>
@@ -161,6 +173,12 @@ function isLiked(song) {
   return likedSongs.value.some(s => s.title === song.title && s.artist === song.artist)
 }
 
+const openMenuIndex = ref(null)
+
+function toggleMenu(index) {
+  openMenuIndex.value = openMenuIndex.value === index ? null : index
+}
+
 
 
 async function toggleLikeCurrentTrack() {
@@ -192,6 +210,20 @@ async function toggleLikeCurrentTrack() {
     }
   }
 }
+
+async function removeLiked(song) {
+  try {
+    await removeLikedTrack(song)
+    likedSongs.value = likedSongs.value.filter(s =>
+      !(s.title === song.title && s.artist === song.artist)
+    )
+    toast.info(`🗑️ « ${song.title} » retiré de vos favoris`)
+  } catch (err) {
+    console.error('❌ Erreur lors de la suppression du like depuis la sidebar :', err)
+    toast.error("Erreur lors de la suppression du titre")
+  }
+}
+
 
 
 
@@ -335,11 +367,22 @@ watch(
 .content-wrapper,
 .sbar,
 .mood-track,
-.track-item,
 .friend-card {
   position: relative;
   z-index: 1;
 }
+
+.track-item {
+  position: relative; /* ⬅️ Ajout nécessaire */
+  display: flex;
+  align-items: center;
+  margin-bottom: 1rem;
+  padding: 0.5rem;
+  border-radius: 8px;
+  background-color: #2a2a2a;
+  transition: background 0.2s ease;
+}
+
 .home {
   background: linear-gradient(320deg, #101010 30%, #2a2a2a 100%);
   color: white;
@@ -411,6 +454,51 @@ watch(
   border: 2px solid #fff;
 }
 
+.menu-wrapper {
+  margin-left: auto;
+  position: absolute;
+  right: 45px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.more-btn {
+  background: none;
+  border: none;
+  font-size: 20px;
+  color: #ccc;
+  margin-left: 10px;
+  cursor: pointer;
+}
+
+.dropdown-menu {
+  position: absolute;
+  right: 0;
+  bottom: 100%; 
+  background-color: #2a2a2a;
+  border: 1px solid #444;
+  border-radius: 5px;
+  padding: 5px 10px;
+  z-index: 999; 
+  display: flex;
+  flex-direction: column;
+  min-width: 160px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.6);
+}
+
+
+.dropdown-menu a {
+  color: #fff;
+  text-decoration: none;
+  padding: 5px 0;
+  font-size: 14px;
+}
+
+.dropdown-menu a:hover {
+  color: #1DB954; /* Spotify green */
+}
+
+
 .mood-text {
   margin-top: 20px;
   font-size: 18px;
@@ -466,6 +554,23 @@ watch(
   font-size: 1.1rem;
   margin-bottom: 1rem;
 }
+
+.delike-btn {
+  margin-left: auto;
+  background: none;
+  border: none;
+  font-size: 18px;
+  color: #ff5e5e;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+  top: 50%;
+
+}
+
+.delike-btn:hover {
+  transform: scale(1.2);
+}
+
 
 .track-item {
   display: flex;
@@ -532,4 +637,25 @@ watch(
   font-size: 0.85rem;
   color: #aaa;
 }
+
+.dropdown-link {
+  display: flex;
+  align-items: center;
+  color: white;
+  text-decoration: none;
+  padding: 4px 8px;
+  gap: 8px;
+  transition: background 0.2s ease;
+}
+
+.dropdown-link:hover {
+  background-color: #333;
+  border-radius: 4px;
+}
+
+.dropdown-icon {
+  width: 16px;
+  height: 16px;
+}
+
 </style>

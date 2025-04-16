@@ -1,8 +1,23 @@
 const express = require("express");
+const bcrypt = require('bcrypt');
 const router = express.Router();
 const authMiddleware = require("../middleware/authMiddleware");
 const db = require("../db");
 const User = require("../models/User");
+const multer = require('multer');
+const path = require('path');
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, path.join(__dirname, '../../uploads/avatars')); 
+  },
+  filename: (req, file, cb) => {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    cb(null, `${uniqueSuffix}-${file.originalname}`);
+  },
+});
+
+const upload = multer({ storage });
 
 // Route avec token (utilisateur classique)
 router.get("/me", authMiddleware, async (req, res) => {
@@ -164,19 +179,40 @@ router.get('/', async (req, res) => {
   }
 });
 
-router.get('/all', async (req, res) => {
-  const { spotify_id } = req.query;
+// Route pour mettre à jour le nom d'utilisateur
+router.put('/update-username', authMiddleware, async (req, res) => {
+  const { newUsername } = req.body;
+
+  if (!newUsername) {
+    return res.status(400).json({ message: 'Le nouveau nom d\'utilisateur est requis.' });
+  }
 
   try {
-    const [users] = await db.promise().query(
-      "SELECT id, username, avatar FROM users WHERE spotify_id != ? OR spotify_id IS NULL",
-      [spotify_id]
-    );
-    res.json(users);
+    const userId = req.user.id;
+    await User.updateUsername(userId, newUsername);
+    res.json({ message: 'Nom d\'utilisateur mis à jour avec succès.' });
   } catch (err) {
-    console.error("❌ Error fetching users:", err);
-    res.status(500).json({ message: "Server error" });
+    console.error("❌ Erreur lors de la mise à jour du nom d'utilisateur :", err);
+    res.status(500).json({ message: 'Erreur serveur.' });
   }
 });
+
+// Route pour uploader l'avatar
+router.post('/upload-avatar', authMiddleware, upload.single('avatar'), async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const avatarPath = `/uploads/avatars/${req.file.filename}`;
+
+    // Mise à jour de l'avatar dans la base de données
+    await User.updateAvatar(userId, avatarPath);
+
+    res.json({ message: 'Avatar mis à jour avec succès.', avatarUrl: avatarPath });
+  } catch (err) {
+    console.error('❌ Erreur lors de l\'upload de l\'avatar :', err);
+    res.status(500).json({ message: 'Erreur serveur.' });
+  }
+});
+
+
 
 module.exports = router;

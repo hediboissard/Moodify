@@ -35,17 +35,16 @@ const findUserByEmail = (email) => {
 // 🔍 Trouver un utilisateur par ID
 const findUserById = (id) => {
   return new Promise((resolve, reject) => {
-    const sql = 'SELECT * FROM users WHERE id = ?'
+    const sql = 'SELECT id, username, email, avatar FROM users WHERE id = ?';
     db.query(sql, [id], (err, results) => {
       if (err) {
-        console.error("❌ Erreur SQL dans findUserById :", err)
-        return reject(err)
+        console.error("❌ Erreur SQL dans findUserById :", err);
+        return reject(err);
       }
-      resolve(results[0] || null)
-    })
-  })
-}
-
+      resolve(results[0]);
+    });
+  });
+};
 
 // ❌ Supprimer un utilisateur
 const deleteUserById = (id) => {
@@ -75,6 +74,33 @@ const findUserBySpotifyId = (spotifyId) => {
   })
 }
 
+// 🔄 Mettre à jour le nom d'utilisateur
+const updateUsername = (id, newUsername) => {
+  return new Promise((resolve, reject) => {
+    const sql = 'UPDATE users SET username = ? WHERE id = ?';
+    db.query(sql, [newUsername, id], (err, result) => {
+      if (err) {
+        console.error("❌ Erreur SQL dans updateUsername :", err);
+        return reject(err);
+      }
+      resolve(result);
+    });
+  });
+};
+
+const updateAvatar = (id, avatarPath) => {
+  return new Promise((resolve, reject) => {
+    const sql = 'UPDATE users SET avatar = ? WHERE id = ?';
+    db.query(sql, [avatarPath, id], (err, result) => {
+      if (err) {
+        console.error("❌ Erreur SQL dans updateAvatar :", err);
+        return reject(err);
+      }
+      resolve(result);
+    });
+  });
+};
+
 
 
 
@@ -83,5 +109,7 @@ module.exports = {
   findUserByEmail,
   findUserById,
   deleteUserById,
-  findUserBySpotifyId
+  findUserBySpotifyId,
+  updateUsername,
+  updateAvatar
 }
