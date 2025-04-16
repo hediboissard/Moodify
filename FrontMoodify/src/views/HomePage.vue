@@ -159,6 +159,20 @@ function sliderToMoodLevel() {
   return Math.floor(sliderValue.value * 9) + 1;
 }
 
+function playNext() {
+  if (currentIndex.value < songs.value.length - 1) {
+    currentIndex.value++;
+    currentSong.value = songs.value[currentIndex.value];
+  }
+}
+
+function playPrevious() {
+  if (currentIndex.value > 0) {
+    currentIndex.value--;
+    currentSong.value = songs.value[currentIndex.value];
+  }
+}
+
 async function fetchSongByMood() {
   try {
     const level = sliderToMoodLevel();
