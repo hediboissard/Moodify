@@ -46,7 +46,7 @@
     position: absolute;
     top: 10vh; 
     bottom: 0;
-    background-color: #1e1e1ed1;
+    background-color: #0e0e0ed1;
     color: white;
     transition: width 0.3s ease;
     overflow: hidden;
