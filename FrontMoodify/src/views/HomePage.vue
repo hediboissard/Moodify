@@ -73,7 +73,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, watch, onMounted } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import axios from 'axios';
 import Navbar from '@/components/Navbar.vue'
 import MusicPlayer from '@/components/MusicPlayer.vue'
@@ -208,9 +208,7 @@ const fetchFriends = async () => {
   }
 }
 
-onMounted(() => {
-  fetchFriends()
-})
+
 
 onMounted(() => {
   const script = document.createElement('script')
