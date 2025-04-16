@@ -98,6 +98,13 @@
     <img :src="playlist.images?.[0]?.url || defaultImage" class="playlist-image" />
     <div class="playlist-name">{{ playlist.name }}</div>
   </div>
+  <li @click="createNewPlaylist" class="playlist-card create-card">
+  <div class="playlist-image">
+    <span class="plus-icon">＋</span>
+  </div>
+  <p>Nouvelle playlist</p>
+</li>
+
 </div>
 
     <p v-else>Aucune playlist trouvée.</p>
@@ -270,6 +277,82 @@ async function addTrackToPlaylist(playlistId) {
     toast.error("Erreur ajout du morceau")
   }
 }
+
+async function fetchUserPlaylists() {
+  const accessToken = localStorage.getItem('access_token')
+  if (!accessToken) return toast.error("Pas de token Spotify")
+
+  try {
+    const res = await axios.get('https://api.spotify.com/v1/me/playlists?limit=50', {
+      headers: { Authorization: `Bearer ${accessToken}` }
+    })
+    userPlaylists.value = res.data.items
+    console.log("Playlists récupérées 🎧", res.data.items)
+    
+
+
+  } catch (err) {
+    console.error("❌ Erreur récupération playlists :", err)
+    toast.error("Erreur récupération des playlists")
+  }
+}
+
+async function createNewPlaylist() {
+  const accessToken = localStorage.getItem('access_token')
+  if (!accessToken) return toast.error("Pas de token Spotify")
+
+  const playlistName = prompt("Nom de la nouvelle playlist :")
+  if (!playlistName) return
+
+  try {
+    const userRes = await axios.get('https://api.spotify.com/v1/me', {
+      headers: { Authorization: `Bearer ${accessToken}` }
+    })
+    const userId = userRes.data.id
+
+    // Création de la playlist
+    const playlistRes = await axios.post(
+      `https://api.spotify.com/v1/users/${userId}/playlists`,
+      {
+        name: playlistName,
+        public: false,
+        description: "Playlist créée depuis Moodify 🎧"
+      },
+      {
+        headers: { Authorization: `Bearer ${accessToken}` }
+      }
+    )
+
+
+    const newPlaylistId = playlistRes.data.id
+
+    // Ajouter le morceau
+    await axios.post(
+      `https://api.spotify.com/v1/playlists/${newPlaylistId}/tracks`,
+      {
+        uris: [selectedTrack.value.spotify_uri]
+      },
+      {
+        headers: { Authorization: `Bearer ${accessToken}` }
+      }
+    )
+
+    toast.success(`✅ Playlist « ${playlistName} » créée et morceau ajouté !`)
+
+    // 🔁 Petite pause pour laisser Spotify "propager" la playlist
+    await new Promise(resolve => setTimeout(resolve, 500))
+
+    // 🔄 Recharge les playlists
+    await fetchUserPlaylists()
+
+  } catch (err) {
+    console.error('❌ Erreur création playlist:', err)
+    toast.error("Erreur lors de la création")
+  }
+}
+
+
+
 
 
 
@@ -802,6 +885,7 @@ watch(
   flex-direction: column;
   align-items: center;
   padding: 10px;
+  text-align: center;
 }
 
 .playlist-card:hover {
@@ -819,10 +903,26 @@ watch(
 .playlist-card span {
   margin-top: 8px;
   font-size: 14px;
-  text-align: center;
   color: #ddd;
 }
 
+/* 🆕 Style spécial pour la "carte création" */
+.create-card {
+  background-color: #1DB95422;
+  border: 2px dashed #1DB954;
+  justify-content: center;
+}
+
+.create-card .plus-icon {
+  font-size: 48px;
+  color: #1DB954;
+  margin-bottom: 10px;
+}
+
+.create-card span {
+  font-weight: bold;
+  color: #1DB954;
+}
 
 .close-btn {
   margin-top: 20px;
@@ -835,6 +935,7 @@ watch(
   display: block;
   margin-left: auto;
 }
+
 
 
 

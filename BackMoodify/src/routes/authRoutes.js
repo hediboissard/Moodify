@@ -13,7 +13,7 @@ router.post('/login', login);
 
 // Redirige vers Spotify login
 router.get('/spotify/login', (req, res) => {
-  const scope = 'user-read-email playlist-modify-public';
+  const scope = 'user-read-email user-read-private playlist-modify-public playlist-modify-private';
   const queryParams = querystring.stringify({
     response_type: 'code',
     client_id: process.env.SPOTIFY_CLIENT_ID,
