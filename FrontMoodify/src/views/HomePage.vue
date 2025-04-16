@@ -1,7 +1,7 @@
 <template>
   <div class="home">
 
-    <Navbar />
+    <Navbar :color="currentMood.color" />
 
     <!-- Particles background -->
     <div id="particles-js"></div>
@@ -19,6 +19,20 @@
             <h4>{{ song.title }}</h4>
             <p>{{ song.artist }}</p>
           </div>
+          <div class="menu-wrapper">
+            <button class="more-btn" @click="toggleMenu(index)">⋯</button>
+            <div v-if="openMenuIndex === index" class="dropdown-menu">
+              <a :href="song.spotify_url" target="_blank" class="dropdown-link">
+                <img src="../../public/logo_spotify.svg" alt="Spotify" class="dropdown-icon" />
+                Ouvrir dans Spotify
+              </a>
+
+              <button class="dropdown-link" @click="openPlaylistPopup(song)">
+                Ajouter à une playlist
+              </button>
+            </div>
+          </div>
+          <button @click="removeLiked(song)" class="delike-btn">❌</button>
         </div>
       </div>
     </Sidebar>
@@ -69,14 +83,47 @@
       :onPrev="playPrevious"
       :onNext="playNext"
     />
+
+    <!-- 🎵 Popup d'ajout à une playlist -->
+<div v-if="showPlaylistModal" class="modal-overlay" @click.self="closePlaylistPopup">
+  <div class="modal-content">
+    <h3>Ajouter à une playlist</h3>
+    <div class="playlist-grid" v-if="userPlaylists.length > 0">
+  <div
+    v-for="playlist in userPlaylists"
+    :key="playlist.id"
+    class="playlist-card"
+    @click="addTrackToPlaylist(playlist.id)"
+  >
+    <img :src="playlist.images?.[0]?.url || defaultImage" class="playlist-image" />
+    <div class="playlist-name">{{ playlist.name }}</div>
+  </div>
+</div>
+
+    <p v-else>Aucune playlist trouvée.</p>
+    <button class="close-btn" @click="closePlaylistPopup">Fermer</button>
+  </div>
+</div>
+
+
   </div>
 </template>
 
 <script setup>
 import { ref, computed, onMounted, watch } from 'vue'
+import axios from 'axios';
 import Navbar from '@/components/Navbar.vue'
 import MusicPlayer from '@/components/MusicPlayer.vue'
 import Sidebar from '@/components/Sidebar.vue'
+import { saveLikedTrack, getLikedTracks, removeLikedTrack } from '@/services/likeService'
+import { useToast } from 'vue-toastification'
+const toast = useToast()
+
+const showPlaylistModal = ref(false)
+const userPlaylists = ref([])
+const selectedTrack = ref(null)
+const defaultImage = '/default_playlist_cover.png'
+
 
 
 const showLeftSidebar = ref(false)
@@ -88,6 +135,7 @@ const currentIndex = ref(0)
 const likedSongs = ref([])
 const likedExpanded = ref(true)
 
+const friends = ref([]);
 
 const moods = [
   { mood: "Productif", emoji: "✅", color: "#4CAF50" },
@@ -154,23 +202,138 @@ function isLiked(song) {
   return likedSongs.value.some(s => s.title === song.title && s.artist === song.artist)
 }
 
-function toggleLikeCurrentTrack() {
-  if (!currentSong.value) return
+const openMenuIndex = ref(null)
+
+function toggleMenu(index) {
+  openMenuIndex.value = openMenuIndex.value === index ? null : index
+}
+
+async function openPlaylistPopup(song) {
+  // Si le champ spotify_uri n'existe pas, on le dérive depuis l'URL
+  const uri = song.spotify_uri || (
+    song.spotify_url?.includes('/track/')
+      ? `spotify:track:${song.spotify_url.split('/track/')[1].split('?')[0]}`
+      : null
+  )
+
+  if (!uri) {
+    toast.error("URI Spotify introuvable pour ce morceau")
+    return
+  }
+
+  // On stocke la track avec la bonne URI
+  selectedTrack.value = { ...song, spotify_uri: uri }
+  showPlaylistModal.value = true
+
+  const accessToken = localStorage.getItem('access_token')
+  if (!accessToken) return toast.error("Pas de token Spotify")
+
+  try {
+    const res = await axios.get('https://api.spotify.com/v1/me/playlists', {
+      headers: {
+        Authorization: `Bearer ${accessToken}`
+      }
+    })
+    userPlaylists.value = res.data.items
+  } catch (err) {
+    console.error("❌ Erreur récupération playlists :", err)
+    toast.error("Erreur récupération des playlists")
+  }
+}
+
+function closePlaylistPopup() {
+  showPlaylistModal.value = false
+  selectedTrack.value = null
+}
+
+async function addTrackToPlaylist(playlistId) {
+  const accessToken = localStorage.getItem('access_token')
+  if (!accessToken) return toast.error("Pas de token Spotify")
+
+  const uri = selectedTrack.value?.spotify_uri
+  if (!uri) return toast.error("URI manquante pour ce morceau")
+
+  try {
+    await axios.post(
+      `https://api.spotify.com/v1/playlists/${playlistId}/tracks`,
+      { uris: [uri] },
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`
+        }
+      }
+    )
+    toast.success(`🎶 « ${selectedTrack.value.title} » ajouté à la playlist !`)
+    closePlaylistPopup()
+  } catch (err) {
+    console.error("❌ Erreur ajout à la playlist :", err)
+    toast.error("Erreur ajout du morceau")
+  }
+}
+
+
+
+
+async function toggleLikeCurrentTrack() {
+  if (!currentSong.value) return;
 
   const index = likedSongs.value.findIndex(
     s => s.title === currentSong.value.title && s.artist === currentSong.value.artist
-  )
+  );
 
   if (index !== -1) {
-    likedSongs.value.splice(index, 1)
+    const removedTrack = likedSongs.value.splice(index, 1)[0];
+    try {
+      await removeLikedTrack(removedTrack);
+      console.log("🗑️ Titre supprimé de la BDD :", removedTrack.title);
+      toast.info(`🗑️ « ${removedTrack.title} » supprimé des favoris`);
+    } catch (err) {
+      console.error('❌ Erreur lors de la suppression du like :', err);
+      toast.error("Erreur lors de la suppression du like");
+    }
   } else {
-    likedSongs.value.push({ ...currentSong.value })
+    likedSongs.value.push({ ...currentSong.value });
+    try {
+      const res = await saveLikedTrack(currentSong.value);
+      console.log("✅ Titre liké enregistré dans la BDD :", currentSong.value.title, res);
+      toast.success(`❤️ « ${currentSong.value.title} » ajouté aux favoris`);
+    } catch (err) {
+      console.error('❌ Erreur en sauvegardant le like :', err);
+      toast.error("Erreur lors de l'enregistrement du like");
+    }
   }
 }
+
+async function removeLiked(song) {
+  try {
+    await removeLikedTrack(song)
+    likedSongs.value = likedSongs.value.filter(s =>
+      !(s.title === song.title && s.artist === song.artist)
+    )
+    toast.info(`🗑️ « ${song.title} » retiré de vos favoris`)
+  } catch (err) {
+    console.error('❌ Erreur lors de la suppression du like depuis la sidebar :', err)
+    toast.error("Erreur lors de la suppression du titre")
+  }
+}
+
+
+
 
 function toggleLikedExpanded() {
   likedExpanded.value = !likedExpanded.value
 }
+const fetchFriends = async () => {
+  try {
+    const currentUserId = localStorage.getItem('userId')
+    const response = await axios.get(`http://localhost:3000/api/friends/${currentUserId}`)
+    friends.value = response.data
+  } catch (error) {
+    console.error('❌ Erreur lors de la récupération des amis:', error)
+  }
+}
+
+
 
 onMounted(() => {
   const script = document.createElement('script')
@@ -178,32 +341,16 @@ onMounted(() => {
   script.onload = () => {
     window.particlesJS('particles-js', {
       particles: {
-        number: {
-          value: 1000,
-          density: {
-            enable: true,
-            value_area: 800
-          }
-        },
+        number: { value: 1000, density: { enable: true, value_area: 800 } },
         color: { value: '#00ff88' },
         shape: {
           type: 'circle',
           stroke: { width: 0, color: '#000000' },
           polygon: { nb_sides: 5 }
         },
-        opacity: {
-          value: 0.5,
-          random: true,
-          anim: { enable: false }
-        },
-        size: {
-          value: 2,
-          random: true,
-          anim: { enable: false }
-        },
-        line_linked: {
-          enable: false
-        },
+        opacity: { value: 0.5, random: true, anim: { enable: false } },
+        size: { value: 2, random: true, anim: { enable: false } },
+        line_linked: { enable: false },
         move: {
           enable: true,
           speed: 1,
@@ -215,14 +362,8 @@ onMounted(() => {
       interactivity: {
         detect_on: 'canvas',
         events: {
-          onhover: {
-            enable: true,
-            mode: 'bubble'
-          },
-          onclick: {
-            enable: true,
-            mode: 'push'
-          },
+          onhover: { enable: true, mode: 'bubble' },
+          onclick: { enable: true, mode: 'push' },
           resize: true
         },
         modes: {
@@ -233,26 +374,68 @@ onMounted(() => {
             opacity: 0,
             speed: 3
           },
-          push: {
-            particles_nb: 4
-          }
+          push: { particles_nb: 4 }
         }
       },
       retina_detect: true
     })
   }
   document.head.appendChild(script)
+
+  const fetchLikedSongs = async () => {
+    try {
+      likedSongs.value = await getLikedTracks()
+    } catch (err) {
+      console.error('❌ Erreur lors du chargement des titres likés :', err)
+    }
+  }
+
+  fetchLikedSongs()
+  fetchFriends()
+
 })
+
 
 watch(
   () => currentMood.value.color,
   (newColor) => {
-    if (window.pJSDom && window.pJSDom[0]) {
+    // 🔄 Particules
+    const pjs = window.pJSDom?.[0]?.pJS
+    if (pjs) {
       window.pJSDom[0].pJS.particles.color.value = newColor
       window.pJSDom[0].pJS.fn.particlesRefresh()
+
     }
+
+    // 🧠 Logo "Moodify"
+    const moodifyText = document.getElementById('moodify')
+    if (moodifyText) {
+      moodifyText.style.color = newColor
+    }
+    const logo = document.getElementById('Ellipse 1')
+    const logo2 = document.getElementById('Ellipse 2')
+    if (logo && logo2) {
+      logo.style.fill = newColor
+      logo2.style.fill = newColor
+    }
+
+    // ✅ .link-button border color
+    const linkButtons = document.querySelectorAll('.links button')
+    linkButtons.forEach(btn => {
+      btn.style.borderColor = newColor
+      btn.style.color = newColor
+    })
+
+    // ✅ .links a.active color or border (adjust as needed)
+    const activeLinks = document.querySelectorAll('.links a.active')
+    activeLinks.forEach(link => {
+      link.style.color = newColor
+      link.style.borderBottom = `2px solid ${newColor}`
+    })
   }
 )
+
+
 </script>
 
 <style scoped>
@@ -277,11 +460,22 @@ watch(
 .content-wrapper,
 .sbar,
 .mood-track,
-.track-item,
 .friend-card {
   position: relative;
   z-index: 1;
 }
+
+.track-item {
+  position: relative; /* ⬅️ Ajout nécessaire */
+  display: flex;
+  align-items: center;
+  margin-bottom: 1rem;
+  padding: 0.5rem;
+  border-radius: 8px;
+  background-color: #2a2a2a;
+  transition: background 0.2s ease;
+}
+
 .home {
   background: linear-gradient(320deg, #101010 30%, #2a2a2a 100%);
   color: white;
@@ -300,6 +494,7 @@ watch(
 }
 
 .sbar {
+  background: #0000001f;
   width: 80%;
   margin: 30px 10px;
   height: 50vh;
@@ -351,6 +546,51 @@ watch(
   cursor: pointer;
   border: 2px solid #fff;
 }
+
+.menu-wrapper {
+  margin-left: auto;
+  position: absolute;
+  right: 45px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.more-btn {
+  background: none;
+  border: none;
+  font-size: 20px;
+  color: #ccc;
+  margin-left: 10px;
+  cursor: pointer;
+}
+
+.dropdown-menu {
+  position: absolute;
+  right: 0;
+  bottom: 100%; 
+  background-color: #2a2a2a;
+  border: 1px solid #444;
+  border-radius: 5px;
+  padding: 5px 10px;
+  z-index: 999; 
+  display: flex;
+  flex-direction: column;
+  min-width: 160px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.6);
+}
+
+
+.dropdown-menu a {
+  color: #fff;
+  text-decoration: none;
+  padding: 5px 0;
+  font-size: 14px;
+}
+
+.dropdown-menu a:hover {
+  color: #1DB954; /* Spotify green */
+}
+
 
 .mood-text {
   margin-top: 20px;
@@ -407,6 +647,23 @@ watch(
   font-size: 1.1rem;
   margin-bottom: 1rem;
 }
+
+.delike-btn {
+  margin-left: auto;
+  background: none;
+  border: none;
+  font-size: 18px;
+  color: #ff5e5e;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+  top: 50%;
+
+}
+
+.delike-btn:hover {
+  transform: scale(1.2);
+}
+
 
 .track-item {
   display: flex;
@@ -473,4 +730,112 @@ watch(
   font-size: 0.85rem;
   color: #aaa;
 }
+
+.dropdown-link {
+  display: flex;
+  align-items: center;
+  color: white;
+  background: none;
+  border: none;
+  text-decoration: none;
+  padding: 4px 8px;
+  gap: 8px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.dropdown-link:hover {
+  background-color: #333;
+  border-radius: 4px;
+}
+
+
+.dropdown-icon {
+  width: 16px;
+  height: 16px;
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.modal-content {
+  background: #1e1e1e;
+  padding: 20px;
+  border-radius: 12px;
+  width: 80%;
+  max-width: 900px;
+  color: white;
+}
+
+.modal-content h3 {
+  margin-bottom: 20px;
+  font-size: 1.5rem;
+  text-align: center;
+}
+
+.playlist-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 20px;
+  justify-items: center;
+}
+
+.playlist-card {
+  width: 140px;
+  background-color: #2a2a2a;
+  border-radius: 10px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 10px;
+}
+
+.playlist-card:hover {
+  transform: scale(1.05);
+  background-color: #333;
+}
+
+.playlist-card img {
+  width: 100%;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 6px;
+}
+
+.playlist-card span {
+  margin-top: 8px;
+  font-size: 14px;
+  text-align: center;
+  color: #ddd;
+}
+
+
+.close-btn {
+  margin-top: 20px;
+  background: transparent;
+  border: 1px solid #fff;
+  color: white;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  display: block;
+  margin-left: auto;
+}
+
+
+
 </style>

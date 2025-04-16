@@ -1,11 +1,10 @@
--- Création de la base de données
 CREATE DATABASE IF NOT EXISTS moodify;
+
 USE moodify;
 
--- Supprimer la table users si elle existe
+
 DROP TABLE IF EXISTS users;
 
---Création de la table users
 CREATE TABLE users (
   id INT AUTO_INCREMENT PRIMARY KEY,
   email VARCHAR(191) NOT NULL UNIQUE,
@@ -15,4 +14,27 @@ CREATE TABLE users (
   mood VARCHAR(50),
   avatar VARCHAR(255),
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Creation de la table liked songs
+CREATE TABLE liked_songs (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  user_id INT,
+  title VARCHAR(255),
+  artist VARCHAR(255),
+  image TEXT,
+  preview_url TEXT,
+  spotify_url TEXT,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (user_id) REFERENCES users(id)
+);
+
+CREATE TABLE IF NOT EXISTS friends (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  userId INT NOT NULL,
+  friendId INT NOT NULL,
+  createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (userId) REFERENCES users(id) ON DELETE CASCADE,
+  FOREIGN KEY (friendId) REFERENCES users(id) ON DELETE CASCADE,
+  UNIQUE KEY unique_friendship (userId, friendId)
 );
