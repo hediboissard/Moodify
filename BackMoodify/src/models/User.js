@@ -46,19 +46,6 @@ const findUserById = (id) => {
   })
 }
 
-// 🖼️ Mettre à jour l'avatar
-const updateAvatar = (id, avatarPath) => {
-  return new Promise((resolve, reject) => {
-    const sql = 'UPDATE users SET avatar = ? WHERE id = ?'
-    db.query(sql, [avatarPath, id], (err, result) => {
-      if (err) {
-        console.error("❌ Erreur SQL dans updateAvatar :", err)
-        return reject(err)
-      }
-      resolve(result)
-    })
-  })
-}
 
 // ❌ Supprimer un utilisateur
 const deleteUserById = (id) => {
@@ -95,7 +82,6 @@ module.exports = {
   createUser,
   findUserByEmail,
   findUserById,
-  updateAvatar,
   deleteUserById,
   findUserBySpotifyId
 }
