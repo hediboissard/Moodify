@@ -179,7 +179,7 @@ onMounted(() => {
     window.particlesJS('particles-js', {
       particles: {
         number: {
-          value: 100,
+          value: 1000,
           density: {
             enable: true,
             value_area: 800
