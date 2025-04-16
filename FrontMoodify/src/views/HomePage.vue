@@ -1,7 +1,7 @@
 <template>
   <div class="home">
 
-    <Navbar />
+    <Navbar :color="currentMood.color" />
 
     <!-- Particles background -->
     <div id="particles-js"></div>
@@ -247,12 +247,43 @@ onMounted(() => {
 watch(
   () => currentMood.value.color,
   (newColor) => {
-    if (window.pJSDom && window.pJSDom[0]) {
+    // 🔄 Particules
+    const pjs = window.pJSDom?.[0]?.pJS
+    if (pjs) {
       window.pJSDom[0].pJS.particles.color.value = newColor
       window.pJSDom[0].pJS.fn.particlesRefresh()
+
     }
+
+    // 🧠 Logo "Moodify"
+    const moodifyText = document.getElementById('moodify')
+    if (moodifyText) {
+      moodifyText.style.color = newColor
+    }
+    const logo = document.getElementById('Ellipse 1')
+    const logo2 = document.getElementById('Ellipse 2')
+    if (logo && logo2) {
+      logo.style.fill = newColor
+      logo2.style.fill = newColor
+    }
+
+    // ✅ .link-button border color
+    const linkButtons = document.querySelectorAll('.links button')
+    linkButtons.forEach(btn => {
+      btn.style.borderColor = newColor
+      btn.style.color = newColor
+    })
+
+    // ✅ .links a.active color or border (adjust as needed)
+    const activeLinks = document.querySelectorAll('.links a.active')
+    activeLinks.forEach(link => {
+      link.style.color = newColor
+      link.style.borderBottom = `2px solid ${newColor}`
+    })
   }
 )
+
+
 </script>
 
 <style scoped>
@@ -300,6 +331,7 @@ watch(
 }
 
 .sbar {
+  background: #0000001f;
   width: 80%;
   margin: 30px 10px;
   height: 50vh;
