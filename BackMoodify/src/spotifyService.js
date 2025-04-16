@@ -7,7 +7,7 @@ let tokenExpiresAt = 0;
 
 const moodToPlaylist = {
   1: "4z6eXTMEaSgSApVzYbUqWp", // Productif ✅  //ok
-  2: "6nS31wmspvazxjq3jrhGMO", // Nostalgique 🌅  //ok
+  2: "6s7P4Tn2l0H25GNRwlvbds", // Nostalgique 🌅  //ok
   3: "7i5yMpg2Rp44B4Jovm4BBm", // Amoureux 💘 //ok
   4: "7JabddFr3Q6JPsND4v9Swf", // Chill ☕ //ok
   5: "3czbpPlUYmNKbLf5RphdjY", // Sport 🏋️ //ok
