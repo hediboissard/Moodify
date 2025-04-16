@@ -34,6 +34,7 @@
     <div class="content-wrapper">
       <div class="sbar">
         <div class="emoji">{{ currentMood.emoji }}</div>
+        <div class="mood-label" :style="{ color: currentMood.color }">{{ currentMood.mood }}</div>
         <div class="mood-label">Your Mood</div>
         <input
           type="range"
@@ -77,61 +78,65 @@ const showLeftSidebar = ref(false);
 const showRightSidebar = ref(false);
 const sliderValue = ref(0);
 const currentSong = ref(null);
+const songs = ref([]);
+const currentIndex = ref(0);
 const likedSongs = ref([]);
 const likedExpanded = ref(true);
 
 const moods = [
   {
-    "text": "Productif",
+    "mood": "Productif",
     "emoji": "✅",
     "color": "#4CAF50"
   },
   {
-    "text": "Nostalgique",
+    "mood": "Nostalgique",
     "emoji": "🌅",
     "color": "#FFA07A"
   },
   {
-    "text": "Amoureux",
-    "emoji": "🩷",
+    "mood": "Amoureux",
+    "emoji": "💘",
     "color": "#FF69B4"
   },
   {
-    "text": "Chill",
+    "mood": "Chill",
     "emoji": "☕",
     "color": "#87CEFA"
   },
   {
-    "text": "Sport",
+    "mood": "Sport",
     "emoji": "🏋️",
     "color": "#FF4500"
   },
   {
-    "text": "Créatif",
+    "mood": "Créatif",
     "emoji": "🎨",
     "color": "#9C27B0"
   },
   {
-    "text": "Cocooning",
+    "mood": "Cocooning",
     "emoji": "🕯️",
     "color": "#D2B48C"
   },
   {
-    "text": "Gamer",
+    "mood": "Gamer",
     "emoji": "🎮",
     "color": "#1E90FF"
   },
   {
-    "text": "Fêtard",
+    "mood": "Fêtard",
     "emoji": "🎉",
     "color": "#FFD700" 
   },
   {
-    "text": "Mélancolique",
+    "mood": "Mélancolique",
     "emoji": "🌧️",
     "color": "#708090"
   }
 ];
+
+
 
 const currentMood = computed(() => {
   const index = Math.floor(sliderValue.value * (moods.length - 1));
@@ -158,9 +163,25 @@ async function fetchSongByMood() {
   try {
     const level = sliderToMoodLevel();
     const res = await fetch(`http://localhost:3000/mood/${level}`);
-    currentSong.value = await res.json();
+    songs.value = await res.json();
+    currentIndex.value = 0;
+    currentSong.value = songs.value[0];
   } catch (err) {
     console.error('❌ Erreur fetch mood:', err);
+  }
+}
+
+function playNext() {
+  if (currentIndex.value < songs.value.length - 1) {
+    currentIndex.value++;
+    currentSong.value = songs.value[currentIndex.value];
+  }
+}
+
+function playPrevious() {
+  if (currentIndex.value > 0) {
+    currentIndex.value--;
+    currentSong.value = songs.value[currentIndex.value];
   }
 }
 
@@ -186,6 +207,7 @@ function toggleLikedExpanded() {
   likedExpanded.value = !likedExpanded.value;
 }
 </script>
+
 
 <style scoped>
 .home {
