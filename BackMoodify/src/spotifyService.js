@@ -17,18 +17,6 @@ const moodToPlaylist = {
   9: "30WyFX7yixNvPqecVwzjwg", // Fêtard 🎉 //ok
   10: "7jkxvMgEo8WZwZTRJKiMja", // Mélancolique 🌧️ //ok
 };
-  0: "66mlVn4GNwwbpJZrE8XuGi",
-  1: "66mlVn4GNwwbpJZrE8XuGi",
-  2: "37i9dQZF1DWVV27DiNWxkR",
-  3: "37i9dQZF1DX3YSRoSdA634",
-  4: "37i9dQZF1DX3csziQj0d5b",
-  5: "4quQa2RBA1PbNMaJGEXvWA",
-  6: "1llkez7kiZtBeOw5UjFlJq",
-  7: "6mGhgb5BFsmxEWDHMjCQ1S",
-  8: "37i9dQZF1DX3rxVfibe1L0",
-  9: "1h90L3LP8kAJ7KGjCV2Xfd",
-  10: "37i9dQZF1DX7KNKjOK0o75",
-};
 
 function getPlaylistIdFromMood(mood) {
   const normalizedMood = Math.max(0, Math.min(10, Math.round(mood)));
