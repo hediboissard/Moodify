@@ -164,4 +164,19 @@ router.get('/', async (req, res) => {
   }
 });
 
+router.get('/all', async (req, res) => {
+  const { spotify_id } = req.query;
+
+  try {
+    const [users] = await db.promise().query(
+      "SELECT id, username, avatar FROM users WHERE spotify_id != ? OR spotify_id IS NULL",
+      [spotify_id]
+    );
+    res.json(users);
+  } catch (err) {
+    console.error("❌ Error fetching users:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
 module.exports = router;

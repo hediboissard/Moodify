@@ -17,11 +17,9 @@ app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 // 🧩 Routes
 const userRoutes = require('./routes/userRoutes');
 const authRoutes = require('./routes/authRoutes');
-const friendRoutes = require('./routes/friends');
 
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
-app.use(friendRoutes);
 
 // 🎵 Route Spotify
 app.get('/mood/:score', async (req, res) => {
