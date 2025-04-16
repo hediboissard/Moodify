@@ -11,7 +11,7 @@ const moodToPlaylist = {
   3: "7i5yMpg2Rp44B4Jovm4BBm", // Amoureux 💘 //ok
   4: "7JabddFr3Q6JPsND4v9Swf", // Chill ☕ //ok
   5: "3czbpPlUYmNKbLf5RphdjY", // Sport 🏋️ //ok
-  6: "35hasVCmKv52Va0wWLo4UK", // Créatif 🎨 //ok 
+  6: "35hasVCmKv52Va0wWLo4UK", // Créatif 🎨 //ok
   7: "6xwCH60hsGvo2tLk1j07Ud", // Cocooning 🕯️ //ok
   8: "31JFVuGL18xiuhTfEutoW1", // Gamer 🎮 //ok
   9: "30WyFX7yixNvPqecVwzjwg", // Fêtard 🎉 //ok
@@ -59,31 +59,35 @@ async function getSongsFromMood(score) {
       }
     );
 
-    const items = res.data.items.map(item => item.track).filter(Boolean);
+    const items = res.data.items.map((item) => item.track).filter(Boolean);
 
-    const results = await Promise.all(items.map(async (track) => {
-      let preview_url = track.preview_url;
+    const results = await Promise.all(
+      items.map(async (track) => {
+        let preview_url = track.preview_url;
 
-      if (!preview_url) {
-        const query = `${track.name} ${track.artists[0].name}`;
-        try {
-          const result = await findPreview(query, 1);
-          preview_url = result.success ? result.results[0].previewUrls[0] ?? null : null;
-        } catch (err) {
-          preview_url = null;
+        if (!preview_url) {
+          const query = `${track.name} ${track.artists[0].name}`;
+          try {
+            const result = await findPreview(query, 1);
+            preview_url = result.success
+              ? result.results[0].previewUrls[0] ?? null
+              : null;
+          } catch (err) {
+            preview_url = null;
+          }
         }
-      }
 
-      return {
-        title: track.name,
-        artist: track.artists[0].name,
-        image: track.album.images[0]?.url || null,
-        preview_url,
-        spotify_url: track.external_urls.spotify,
-      };
-    }));
+        return {
+          title: track.name,
+          artist: track.artists[0].name,
+          image: track.album.images[0]?.url || null,
+          preview_url,
+          spotify_url: track.external_urls.spotify,
+        };
+      })
+    );
 
-    return results.filter(track => track.preview_url);
+    return results.filter((track) => track.preview_url);
   } catch (err) {
     console.error("❌ Erreur dans getSongsFromMood:", err.stack || err.message);
     throw new Error("Erreur lors de la récupération des musiques.");
