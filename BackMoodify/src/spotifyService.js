@@ -6,17 +6,16 @@ let accessToken;
 let tokenExpiresAt = 0;
 
 const moodToPlaylist = {
-  0: "66mlVn4GNwwbpJZrE8XuGi", // Bad | Musicas tristes 2025
-  1: "66mlVn4GNwwbpJZrE8XuGi", // piangere fortissimo
-  2: "37i9dQZF1DWVV27DiNWxkR", // Sad Indie
-  3: "37i9dQZF1DX3YSRoSdA634", // Life Sucks
-  4: "37i9dQZF1DX3csziQj0d5b", // homework vibes
-  5: "4quQa2RBA1PbNMaJGEXvWA", // Music joyeuse
-  6: "1llkez7kiZtBeOw5UjFlJq", // The Ultimate Happy Playlist
-  7: "6mGhgb5BFsmxEWDHMjCQ1S", // Happy Hits!
-  8: "37i9dQZF1DX3rxVfibe1L0", // Mood Booster
-  9: "1h90L3LP8kAJ7KGjCV2Xfd", // Feel Good Happy Hits
-  10: "37i9dQZF1DX7KNKjOK0o75", // Have a Great Day!
+  1: "4z6eXTMEaSgSApVzYbUqWp", // Productif ✅  //ok
+  2: "6nS31wmspvazxjq3jrhGMO", // Nostalgique 🌅  //ok
+  3: "7i5yMpg2Rp44B4Jovm4BBm", // Amoureux 💘 //ok
+  4: "7JabddFr3Q6JPsND4v9Swf", // Chill ☕ //ok
+  5: "3czbpPlUYmNKbLf5RphdjY", // Sport 🏋️ //ok
+  6: "35hasVCmKv52Va0wWLo4UK", // Créatif 🎨 //ok 
+  7: "6xwCH60hsGvo2tLk1j07Ud", // Cocooning 🕯️ //ok
+  8: "31JFVuGL18xiuhTfEutoW1", // Gamer 🎮 //ok
+  9: "30WyFX7yixNvPqecVwzjwg", // Fêtard 🎉 //ok
+  10: "7jkxvMgEo8WZwZTRJKiMja", // Mélancolique 🌧️ //ok
 };
 
 function getPlaylistIdFromMood(mood) {

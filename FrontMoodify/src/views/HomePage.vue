@@ -28,6 +28,7 @@
     <div class="content-wrapper">
       <div class="sbar">
         <div class="emoji">{{ currentMood.emoji }}</div>
+        <div class="mood-label" :style="{ color: currentMood.color }">{{ currentMood.mood }}</div>
         <div class="mood-label">Your Mood</div>
         <input
           type="range"
@@ -72,13 +73,59 @@ const sliderValue = ref(0);
 const currentSong = ref(null);
 
 const moods = [
-  { text: "Happy", emoji: "😊", color: "#00ff88" },
-  { text: "Excited", emoji: "🤩", color: "#66ff66" },
-  { text: "Calm", emoji: "🧘‍♂️", color: "#ffff66" },
-  { text: "Meh", emoji: "😶", color: "#ffcc66" },
-  { text: "Tired", emoji: "😴", color: "#ff8844" },
-  { text: "Sad", emoji: "😭", color: "#ff4444" }
+  {
+    "mood": "Productif",
+    "emoji": "✅",
+    "color": "#4CAF50"
+  },
+  {
+    "mood": "Nostalgique",
+    "emoji": "🌅",
+    "color": "#FFA07A"
+  },
+  {
+    "mood": "Amoureux",
+    "emoji": "💘",
+    "color": "#FF69B4"
+  },
+  {
+    "mood": "Chill",
+    "emoji": "☕",
+    "color": "#87CEFA"
+  },
+  {
+    "mood": "Sport",
+    "emoji": "🏋️",
+    "color": "#FF4500"
+  },
+  {
+    "mood": "Créatif",
+    "emoji": "🎨",
+    "color": "#9C27B0"
+  },
+  {
+    "mood": "Cocooning",
+    "emoji": "🕯️",
+    "color": "#D2B48C"
+  },
+  {
+    "mood": "Gamer",
+    "emoji": "🎮",
+    "color": "#1E90FF"
+  },
+  {
+    "mood": "Fêtard",
+    "emoji": "🎉",
+    "color": "#FFD700" 
+  },
+  {
+    "mood": "Mélancolique",
+    "emoji": "🌧️",
+    "color": "#708090"
+  }
 ];
+
+
 
 const currentMood = computed(() => {
   const index = Math.floor(sliderValue.value * (moods.length - 1));
