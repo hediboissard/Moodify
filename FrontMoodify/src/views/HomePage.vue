@@ -92,7 +92,7 @@ const moods = [
   },
   {
     "mood": "Amoureux",
-    "emoji": "💘",
+    "emoji": "🩷",
     "color": "#FF69B4"
   },
   {
