@@ -200,11 +200,16 @@ function toggleLikedExpanded() {
 }
 const fetchFriends = async () => {
   try {
-    const currentUserId = localStorage.getItem('userId')
-    const response = await axios.get(`http://localhost:3000/api/friends/${currentUserId}`)
-    friends.value = response.data
+    // Récupérer les amis du localStorage
+    const storedFriends = localStorage.getItem('friends')
+    if (storedFriends) {
+      friends.value = JSON.parse(storedFriends)
+    } else {
+      friends.value = [] // Si pas d'amis, tableau vide
+    }
   } catch (error) {
     console.error('❌ Erreur lors de la récupération des amis:', error)
+    friends.value = []
   }
 }
 

@@ -33,6 +33,14 @@
           <div class="flex-grow">
             <h3 class="text-xl font-semibold">{{ user.username }}</h3>
           </div>
+          
+          <!-- Add Friend Button -->
+          <button 
+            @click="addFriend(user)"
+            class="px-4 py-2 bg-green-600 hover:bg-green-700 rounded-lg transition-colors"
+          >
+            Add Friend
+          </button>
         </div>
       </div>
     </div>
@@ -70,4 +78,35 @@ const fetchUsers = async () => {
 onMounted(() => {
   fetchUsers()
 })
+
+// Ajouter une fonction pour stocker les amis localement
+const addFriend = (user) => {
+  // Récupérer les amis existants du localStorage
+  const storedFriends = localStorage.getItem('friends')
+  let friends = storedFriends ? JSON.parse(storedFriends) : []
+  
+  // Vérifier si l'utilisateur n'est pas déjà ami
+  if (!friends.some(friend => friend.id === user.id)) {
+    // Créer un objet ami avec les informations nécessaires
+    const newFriend = {
+      id: user.id,
+      username: user.username,
+      avatar: user.avatar || 'https://www.svgrepo.com/show/382106/profile-avatar.svg',
+      moodEmoji: '😊', // Emoji par défaut
+      moodText: 'Feeling good', // Texte par défaut
+      currentTrack: 'No track playing' // Track par défaut
+    }
+    
+    // Ajouter le nouvel ami
+    friends.push(newFriend)
+    
+    // Sauvegarder dans localStorage
+    localStorage.setItem('friends', JSON.stringify(friends))
+    
+    // Afficher une notification
+    alert(`${user.username} ajouté aux amis!`)
+  } else {
+    alert('Cet utilisateur est déjà dans vos amis!')
+  }
+}
 </script>
