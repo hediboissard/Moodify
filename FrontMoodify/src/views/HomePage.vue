@@ -73,10 +73,11 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import Navbar from '@/components/Navbar.vue'
 import MusicPlayer from '@/components/MusicPlayer.vue'
 import Sidebar from '@/components/Sidebar.vue'
+
 
 const showLeftSidebar = ref(false)
 const showRightSidebar = ref(false)
@@ -86,6 +87,7 @@ const songs = ref([])
 const currentIndex = ref(0)
 const likedSongs = ref([])
 const likedExpanded = ref(true)
+
 
 const moods = [
   { mood: "Productif", emoji: "✅", color: "#4CAF50" },
@@ -107,6 +109,7 @@ const currentMood = computed(() => {
 
 function onSliderChange() {
   updateSliderColor()
+  console.log("Slider changed, mood level:", sliderToMoodLevel())
   fetchSongByMood()
 }
 
@@ -182,7 +185,7 @@ onMounted(() => {
             value_area: 800
           }
         },
-        color: { value: '#ffffff' },
+        color: { value: '#00ff88' },
         shape: {
           type: 'circle',
           stroke: { width: 0, color: '#000000' },
@@ -240,6 +243,16 @@ onMounted(() => {
   }
   document.head.appendChild(script)
 })
+
+watch(
+  () => currentMood.value.color,
+  (newColor) => {
+    if (window.pJSDom && window.pJSDom[0]) {
+      window.pJSDom[0].pJS.particles.color.value = newColor
+      window.pJSDom[0].pJS.fn.particlesRefresh()
+    }
+  }
+)
 </script>
 
 <style scoped>
