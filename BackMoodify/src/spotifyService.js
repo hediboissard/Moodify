@@ -18,6 +18,7 @@ const moodToPlaylist = {
   10: "7jkxvMgEo8WZwZTRJKiMja", // Mélancolique 🌧️ //ok
 };
 
+
 function getPlaylistIdFromMood(mood) {
   const normalizedMood = Math.max(0, Math.min(10, Math.round(mood)));
   return moodToPlaylist[normalizedMood];
@@ -42,6 +43,14 @@ async function getAccessToken() {
   );
   accessToken = res.data.access_token;
   tokenExpiresAt = Date.now() + res.data.expires_in * 1000;
+}
+
+function shuffleArray(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+  return array;
 }
 
 async function getSongsFromMood(score) {
@@ -87,7 +96,9 @@ async function getSongsFromMood(score) {
       })
     );
 
-    return results.filter((track) => track.preview_url);
+    const validTracks = results.filter((track) => track.preview_url);
+    const shuffled = shuffleArray(validTracks);
+    return shuffled;
   } catch (err) {
     console.error("❌ Erreur dans getSongsFromMood:", err.stack || err.message);
     throw new Error("Erreur lors de la récupération des musiques.");
