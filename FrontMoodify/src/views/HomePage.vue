@@ -81,12 +81,56 @@ const likedSongs = ref([]);
 const likedExpanded = ref(true);
 
 const moods = [
-  { text: "Happy", emoji: "😊", color: "#00ff88" },
-  { text: "Excited", emoji: "🤩", color: "#66ff66" },
-  { text: "Calm", emoji: "🧘‍♂️", color: "#ffff66" },
-  { text: "Meh", emoji: "😶", color: "#ffcc66" },
-  { text: "Tired", emoji: "😴", color: "#ff8844" },
-  { text: "Sad", emoji: "😭", color: "#ff4444" }
+  {
+    "text": "Productif",
+    "emoji": "✅",
+    "color": "#4CAF50"
+  },
+  {
+    "text": "Nostalgique",
+    "emoji": "🌅",
+    "color": "#FFA07A"
+  },
+  {
+    "text": "Amoureux",
+    "emoji": "🩷",
+    "color": "#FF69B4"
+  },
+  {
+    "text": "Chill",
+    "emoji": "☕",
+    "color": "#87CEFA"
+  },
+  {
+    "text": "Sport",
+    "emoji": "🏋️",
+    "color": "#FF4500"
+  },
+  {
+    "text": "Créatif",
+    "emoji": "🎨",
+    "color": "#9C27B0"
+  },
+  {
+    "text": "Cocooning",
+    "emoji": "🕯️",
+    "color": "#D2B48C"
+  },
+  {
+    "text": "Gamer",
+    "emoji": "🎮",
+    "color": "#1E90FF"
+  },
+  {
+    "text": "Fêtard",
+    "emoji": "🎉",
+    "color": "#FFD700" 
+  },
+  {
+    "text": "Mélancolique",
+    "emoji": "🌧️",
+    "color": "#708090"
+  }
 ];
 
 const currentMood = computed(() => {
