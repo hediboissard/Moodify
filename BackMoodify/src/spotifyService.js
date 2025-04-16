@@ -7,16 +7,17 @@ let tokenExpiresAt = 0;
 
 const moodToPlaylist = {
   1: "4z6eXTMEaSgSApVzYbUqWp", // Productif ✅  //ok
-  2: "6nS31wmspvazxjq3jrhGMO", // Nostalgique 🌅  //ok
+  2: "6s7P4Tn2l0H25GNRwlvbds", // Nostalgique 🌅  //ok
   3: "7i5yMpg2Rp44B4Jovm4BBm", // Amoureux 💘 //ok
   4: "7JabddFr3Q6JPsND4v9Swf", // Chill ☕ //ok
   5: "3czbpPlUYmNKbLf5RphdjY", // Sport 🏋️ //ok
-  6: "35hasVCmKv52Va0wWLo4UK", // Créatif 🎨 //ok 
+  6: "35hasVCmKv52Va0wWLo4UK", // Créatif 🎨 //ok
   7: "6xwCH60hsGvo2tLk1j07Ud", // Cocooning 🕯️ //ok
   8: "31JFVuGL18xiuhTfEutoW1", // Gamer 🎮 //ok
   9: "30WyFX7yixNvPqecVwzjwg", // Fêtard 🎉 //ok
   10: "7jkxvMgEo8WZwZTRJKiMja", // Mélancolique 🌧️ //ok
 };
+
 
 function getPlaylistIdFromMood(mood) {
   const normalizedMood = Math.max(0, Math.min(10, Math.round(mood)));
@@ -44,6 +45,14 @@ async function getAccessToken() {
   tokenExpiresAt = Date.now() + res.data.expires_in * 1000;
 }
 
+function shuffleArray(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+  return array;
+}
+
 async function getSongsFromMood(score) {
   if (!accessToken || Date.now() >= tokenExpiresAt) await getAccessToken();
 
@@ -59,31 +68,37 @@ async function getSongsFromMood(score) {
       }
     );
 
-    const items = res.data.items.map(item => item.track).filter(Boolean);
+    const items = res.data.items.map((item) => item.track).filter(Boolean);
 
-    const results = await Promise.all(items.map(async (track) => {
-      let preview_url = track.preview_url;
+    const results = await Promise.all(
+      items.map(async (track) => {
+        let preview_url = track.preview_url;
 
-      if (!preview_url) {
-        const query = `${track.name} ${track.artists[0].name}`;
-        try {
-          const result = await findPreview(query, 1);
-          preview_url = result.success ? result.results[0].previewUrls[0] ?? null : null;
-        } catch (err) {
-          preview_url = null;
+        if (!preview_url) {
+          const query = `${track.name} ${track.artists[0].name}`;
+          try {
+            const result = await findPreview(query, 1);
+            preview_url = result.success
+              ? result.results[0].previewUrls[0] ?? null
+              : null;
+          } catch (err) {
+            preview_url = null;
+          }
         }
-      }
 
-      return {
-        title: track.name,
-        artist: track.artists[0].name,
-        image: track.album.images[0]?.url || null,
-        preview_url,
-        spotify_url: track.external_urls.spotify,
-      };
-    }));
+        return {
+          title: track.name,
+          artist: track.artists[0].name,
+          image: track.album.images[0]?.url || null,
+          preview_url,
+          spotify_url: track.external_urls.spotify,
+        };
+      })
+    );
 
-    return results.filter(track => track.preview_url);
+    const validTracks = results.filter((track) => track.preview_url);
+    const shuffled = shuffleArray(validTracks);
+    return shuffled;
   } catch (err) {
     console.error("❌ Erreur dans getSongsFromMood:", err.stack || err.message);
     throw new Error("Erreur lors de la récupération des musiques.");

@@ -16,6 +16,19 @@ CREATE TABLE users (
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+-- Creation de la table liked songs
+CREATE TABLE liked_songs (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  user_id INT,
+  title VARCHAR(255),
+  artist VARCHAR(255),
+  image TEXT,
+  preview_url TEXT,
+  spotify_url TEXT,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (user_id) REFERENCES users(id)
+);
+
 CREATE TABLE IF NOT EXISTS friends (
   id INT AUTO_INCREMENT PRIMARY KEY,
   userId INT NOT NULL,

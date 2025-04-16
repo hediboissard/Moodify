@@ -1,9 +1,15 @@
 <template>
   <div class="home">
-    <Navbar />
+
+    <Navbar :color="currentMood.color" />
+
+    <!-- Particles background -->
+    <div id="particles-js"></div>
 
     <Sidebar :open="showLeftSidebar" side="left" @toggle="showLeftSidebar = !showLeftSidebar">
       <p class="sidebar-title" @click="toggleLikedExpanded" style="cursor: pointer;">
+        <span v-if="likedExpanded">⬇️</span>
+        <span v-else>➡️</span>
         ❤️ Titres Likés
       </p>
       <div v-if="likedExpanded">
@@ -52,7 +58,9 @@
           <h3>{{ currentSong.title }}</h3>
           <p>{{ currentSong.artist }}</p>
         </div>
-        <button @click="likeCurrentTrack" class="like-button">❤️</button>
+        <button @click="toggleLikeCurrentTrack" class="like-button">
+          {{ isLiked(currentSong) ? '❤️' : '🤍' }}
+        </button>
       </div>
     </div>
 
@@ -65,134 +73,131 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed, onMounted, watch, onMounted } from 'vue'
 import axios from 'axios';
-import Navbar from '@/components/Navbar.vue';
-import MusicPlayer from '@/components/MusicPlayer.vue';
-import Sidebar from '@/components/Sidebar.vue';
+import Navbar from '@/components/Navbar.vue'
+import MusicPlayer from '@/components/MusicPlayer.vue'
+import Sidebar from '@/components/Sidebar.vue'
+import { saveLikedTrack, getLikedTracks, removeLikedTrack } from '@/services/likeService'
+import { useToast } from 'vue-toastification'
+const toast = useToast()
 
-const showLeftSidebar = ref(false);
-const showRightSidebar = ref(false);
-const sliderValue = ref(0);
-const currentSong = ref(null);
-const songs = ref([]);
-const currentIndex = ref(0);
-const likedSongs = ref([]);
-const likedExpanded = ref(true);
+
+
+
+const showLeftSidebar = ref(false)
+const showRightSidebar = ref(false)
+const sliderValue = ref(0)
+const currentSong = ref(null)
+const songs = ref([])
+const currentIndex = ref(0)
+const likedSongs = ref([])
+const likedExpanded = ref(true)
+
 const friends = ref([]);
 
 const moods = [
-  {
-    "mood": "Productif",
-    "emoji": "✅",
-    "color": "#4CAF50"
-  },
-  {
-    "mood": "Nostalgique",
-    "emoji": "🌅",
-    "color": "#FFA07A"
-  },
-  {
-    "mood": "Amoureux",
-    "emoji": "💘",
-    "color": "#FF69B4"
-  },
-  {
-    "mood": "Chill",
-    "emoji": "☕",
-    "color": "#87CEFA"
-  },
-  {
-    "mood": "Sport",
-    "emoji": "🏋️",
-    "color": "#FF4500"
-  },
-  {
-    "mood": "Créatif",
-    "emoji": "🎨",
-    "color": "#9C27B0"
-  },
-  {
-    "mood": "Cocooning",
-    "emoji": "🕯️",
-    "color": "#D2B48C"
-  },
-  {
-    "mood": "Gamer",
-    "emoji": "🎮",
-    "color": "#1E90FF"
-  },
-  {
-    "mood": "Fêtard",
-    "emoji": "🎉",
-    "color": "#FFD700" 
-  },
-  {
-    "mood": "Mélancolique",
-    "emoji": "🌧️",
-    "color": "#708090"
-  }
-];
-
-
+  { mood: "Productif", emoji: "✅", color: "#4CAF50" },
+  { mood: "Nostalgique", emoji: "🌅", color: "#FFA07A" },
+  { mood: "Amoureux", emoji: "💘", color: "#FF69B4" },
+  { mood: "Chill", emoji: "☕", color: "#87CEFA" },
+  { mood: "Sport", emoji: "🏋️", color: "#FF4500" },
+  { mood: "Créatif", emoji: "🎨", color: "#9C27B0" },
+  { mood: "Cocooning", emoji: "🕯️", color: "#D2B48C" },
+  { mood: "Gamer", emoji: "🎮", color: "#1E90FF" },
+  { mood: "Fêtard", emoji: "🎉", color: "#FFD700" },
+  { mood: "Mélancolique", emoji: "🌧️", color: "#708090" }
+]
 
 const currentMood = computed(() => {
-  const index = Math.floor(sliderValue.value * (moods.length - 1));
-  return moods[index];
-});
+  const index = Math.floor(sliderValue.value * (moods.length - 1))
+  return moods[index]
+})
 
 function onSliderChange() {
-  updateSliderColor();
-  fetchSongByMood();
+  updateSliderColor()
+  console.log("Slider changed, mood level:", sliderToMoodLevel())
+  fetchSongByMood()
 }
 
 function updateSliderColor() {
-  const slider = document.querySelector('.slider');
+  const slider = document.querySelector('.slider')
   if (slider) {
-    slider.style.background = currentMood.value.color;
+    slider.style.background = currentMood.value.color
   }
 }
 
 function sliderToMoodLevel() {
-  return Math.floor(sliderValue.value * 9) + 1;
+  return Math.floor(sliderValue.value * 9) + 1
 }
 
 async function fetchSongByMood() {
   try {
-    const level = sliderToMoodLevel();
-    const res = await fetch(`http://localhost:3000/mood/${level}`);
-    songs.value = await res.json();
-    currentIndex.value = 0;
-    currentSong.value = songs.value[0];
+    const level = sliderToMoodLevel()
+    const res = await fetch(`http://localhost:3000/mood/${level}`)
+    songs.value = await res.json()
+    currentIndex.value = 0
+    currentSong.value = songs.value[0]
   } catch (err) {
-    console.error('❌ Erreur fetch mood:', err);
+    console.error('❌ Erreur fetch mood:', err)
   }
 }
 
 function playNext() {
   if (currentIndex.value < songs.value.length - 1) {
-    currentIndex.value++;
-    currentSong.value = songs.value[currentIndex.value];
+    currentIndex.value++
+    currentSong.value = songs.value[currentIndex.value]
   }
 }
 
 function playPrevious() {
   if (currentIndex.value > 0) {
-    currentIndex.value--;
-    currentSong.value = songs.value[currentIndex.value];
+    currentIndex.value--
+    currentSong.value = songs.value[currentIndex.value]
   }
 }
 
-function likeCurrentTrack() {
-  if (currentSong.value && !likedSongs.value.some(song => song.title === currentSong.value.title && song.artist === currentSong.value.artist)) {
+function isLiked(song) {
+  return likedSongs.value.some(s => s.title === song.title && s.artist === song.artist)
+}
+
+
+
+async function toggleLikeCurrentTrack() {
+  if (!currentSong.value) return;
+
+  const index = likedSongs.value.findIndex(
+    s => s.title === currentSong.value.title && s.artist === currentSong.value.artist
+  );
+
+  if (index !== -1) {
+    const removedTrack = likedSongs.value.splice(index, 1)[0];
+    try {
+      await removeLikedTrack(removedTrack);
+      console.log("🗑️ Titre supprimé de la BDD :", removedTrack.title);
+      toast.info(`🗑️ « ${removedTrack.title} » supprimé des favoris`);
+    } catch (err) {
+      console.error('❌ Erreur lors de la suppression du like :', err);
+      toast.error("Erreur lors de la suppression du like");
+    }
+  } else {
     likedSongs.value.push({ ...currentSong.value });
+    try {
+      const res = await saveLikedTrack(currentSong.value);
+      console.log("✅ Titre liké enregistré dans la BDD :", currentSong.value.title, res);
+      toast.success(`❤️ « ${currentSong.value.title} » ajouté aux favoris`);
+    } catch (err) {
+      console.error('❌ Erreur en sauvegardant le like :', err);
+      toast.error("Erreur lors de l'enregistrement du like");
+    }
   }
 }
+
+
 
 function toggleLikedExpanded() {
-  likedExpanded.value = !likedExpanded.value;
+  likedExpanded.value = !likedExpanded.value
 }
-
 const fetchFriends = async () => {
   try {
     const currentUserId = localStorage.getItem('userId')
@@ -206,12 +211,139 @@ const fetchFriends = async () => {
 onMounted(() => {
   fetchFriends()
 })
+
+onMounted(() => {
+  const script = document.createElement('script')
+  script.src = 'https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js'
+  script.onload = () => {
+    window.particlesJS('particles-js', {
+      particles: {
+        number: { value: 1000, density: { enable: true, value_area: 800 } },
+        color: { value: '#00ff88' },
+        shape: {
+          type: 'circle',
+          stroke: { width: 0, color: '#000000' },
+          polygon: { nb_sides: 5 }
+        },
+        opacity: { value: 0.5, random: true, anim: { enable: false } },
+        size: { value: 2, random: true, anim: { enable: false } },
+        line_linked: { enable: false },
+        move: {
+          enable: true,
+          speed: 1,
+          direction: 'none',
+          random: true,
+          out_mode: 'out'
+        }
+      },
+      interactivity: {
+        detect_on: 'canvas',
+        events: {
+          onhover: { enable: true, mode: 'bubble' },
+          onclick: { enable: true, mode: 'push' },
+          resize: true
+        },
+        modes: {
+          bubble: {
+            distance: 250,
+            size: 0,
+            duration: 2,
+            opacity: 0,
+            speed: 3
+          },
+          push: { particles_nb: 4 }
+        }
+      },
+      retina_detect: true
+    })
+  }
+  document.head.appendChild(script)
+
+  const fetchLikedSongs = async () => {
+    try {
+      likedSongs.value = await getLikedTracks()
+    } catch (err) {
+      console.error('❌ Erreur lors du chargement des titres likés :', err)
+    }
+  }
+
+  fetchLikedSongs()
+  fetchFriends()
+
+})
+
+
+watch(
+  () => currentMood.value.color,
+  (newColor) => {
+    // 🔄 Particules
+    const pjs = window.pJSDom?.[0]?.pJS
+    if (pjs) {
+      window.pJSDom[0].pJS.particles.color.value = newColor
+      window.pJSDom[0].pJS.fn.particlesRefresh()
+
+    }
+
+    // 🧠 Logo "Moodify"
+    const moodifyText = document.getElementById('moodify')
+    if (moodifyText) {
+      moodifyText.style.color = newColor
+    }
+    const logo = document.getElementById('Ellipse 1')
+    const logo2 = document.getElementById('Ellipse 2')
+    if (logo && logo2) {
+      logo.style.fill = newColor
+      logo2.style.fill = newColor
+    }
+
+    // ✅ .link-button border color
+    const linkButtons = document.querySelectorAll('.links button')
+    linkButtons.forEach(btn => {
+      btn.style.borderColor = newColor
+      btn.style.color = newColor
+    })
+
+    // ✅ .links a.active color or border (adjust as needed)
+    const activeLinks = document.querySelectorAll('.links a.active')
+    activeLinks.forEach(link => {
+      link.style.color = newColor
+      link.style.borderBottom = `2px solid ${newColor}`
+    })
+  }
+)
+
+
 </script>
 
-
 <style scoped>
+#particles-js {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+}
+
 .home {
-  background: #121212;
+  background: linear-gradient(320deg, #101010 30%, #2a2a2a 100%);
+  color: white;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  z-index: 1;
+}
+.content-wrapper,
+.sbar,
+.mood-track,
+.track-item,
+.friend-card {
+  position: relative;
+  z-index: 1;
+}
+.home {
+  background: linear-gradient(320deg, #101010 30%, #2a2a2a 100%);
   color: white;
   min-height: 100vh;
   display: flex;
@@ -228,7 +360,7 @@ onMounted(() => {
 }
 
 .sbar {
-  border: solid 4px #1e1e1e;
+  background: #0000001f;
   width: 80%;
   margin: 30px 10px;
   height: 50vh;
@@ -324,6 +456,11 @@ onMounted(() => {
   color: white;
   cursor: pointer;
   margin-left: auto;
+  transition: transform 0.2s ease;
+}
+
+.like-button:hover {
+  transform: scale(1.2);
 }
 
 .sidebar-title {
