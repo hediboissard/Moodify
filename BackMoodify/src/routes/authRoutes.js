@@ -81,7 +81,7 @@ router.get('/spotify/callback', async (req, res) => {
     const token = generateToken(user);
 
     // 🔁 Redirige vers le frontend avec token + spotify_id
-    res.redirect(`http://localhost:5173/?token=${token}&spotify_id=${spotify_id}`);
+    res.redirect(`http://localhost:5173/?token=${token}&spotify_id=${spotify_id}&access_token=${accessToken}`)
   } catch (err) {
     console.error('❌ Erreur Spotify auth:', err);
     res.status(500).send('Erreur lors de l’authentification Spotify');
