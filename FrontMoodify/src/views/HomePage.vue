@@ -826,29 +826,105 @@ watch(
   display: flex;
   align-items: center;
   margin-bottom: 1rem;
-  padding: 0.5rem;
-  background-color: #2a2a2a;
-  border-radius: 8px;
-  position: relative;  /* Ajoutez cette ligne si pas déjà présente */
+  padding: 1rem;
+  background-color: rgba(42, 42, 42, 0.8);
+  border-radius: 12px;
+  position: relative;
+  transition: all 0.3s ease;
+  border: 1px solid transparent;
+}
+
+.friend-card:hover {
+  background-color: rgba(60, 60, 60, 0.9);
+  transform: translateY(-2px);
+  border-color: #1DB954;
+  box-shadow: 0 4px 12px rgba(29, 185, 84, 0.2);
 }
 
 .friend-avatar {
-  width: 45px;
-  height: 45px;
+  width: 50px;
+  height: 50px;
   object-fit: cover;
   border-radius: 50%;
   margin-right: 1rem;
+  border: 2px solid #1DB954;
+  box-shadow: 0 0 10px rgba(29, 185, 84, 0.3);
+  transition: transform 0.3s ease;
+}
+
+.friend-card:hover .friend-avatar {
+  transform: scale(1.1);
+}
+
+.friend-info {
+  flex: 1;
 }
 
 .friend-info h4 {
   margin: 0;
-  font-size: 1rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #fff;
 }
 
-.friend-info p {
-  margin: 2px 0;
+.friend-mood {
+  margin: 4px 0;
+  font-size: 0.9rem;
+  color: #1DB954;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.friend-track {
   font-size: 0.85rem;
-  color: #aaa;
+  color: #a0a0a0;
+  margin: 2px 0;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  max-width: 200px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.remove-friend-btn {
+  opacity: 0;
+  position: absolute;
+  right: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: #ff4444;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  padding: 8px;
+  border-radius: 50%;
+}
+
+.friend-card:hover .remove-friend-btn {
+  opacity: 1;
+}
+
+.remove-friend-btn:hover {
+  background-color: rgba(255, 68, 68, 0.1);
+  transform: translateY(-50%) scale(1.2);
+}
+
+/* Style pour le titre de la section amis */
+.sidebar-title {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #fff;
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid #1DB954;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .dropdown-link {
