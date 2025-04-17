@@ -3,7 +3,6 @@
 
     <Navbar :color="currentMood.color" />
 
-    <!-- Particles background -->
     <div id="particles-js"></div>
 
     <Sidebar :open="showLeftSidebar" side="left" @toggle="showLeftSidebar = !showLeftSidebar">
@@ -477,20 +476,15 @@ const fetchFriends = async () => {
 
 const removeFriend = (friend) => {
   try {
-    // Récupérer les amis actuels du localStorage
     const storedFriends = localStorage.getItem('friends')
     let friends = storedFriends ? JSON.parse(storedFriends) : []
     
-    // Filtrer pour retirer l'ami
     friends = friends.filter(f => f.id !== friend.id)
     
-    // Mettre à jour le localStorage
     localStorage.setItem('friends', JSON.stringify(friends))
     
-    // Mettre à jour l'état local
     fetchFriends()
     
-    // Changer le toast.success en toast.error pour avoir la notification en rouge
     toast.error(`❌ ${friend.username} a été retiré de vos amis`, {
       timeout: 3000,
       position: "bottom-right",
@@ -502,17 +496,32 @@ const removeFriend = (friend) => {
 }
 
 function handleClickOutside(event) {
-  const leftSidebar = document.querySelector('.sidebar.left');
-  const rightSidebar = document.querySelector('.sidebar.right');
+  const leftSidebar = document.querySelector('.sidebar.left')
+  const rightSidebar = document.querySelector('.sidebar.right')
 
   if (showLeftSidebar.value && leftSidebar && !leftSidebar.contains(event.target)) {
-    showLeftSidebar.value = false;
+    showLeftSidebar.value = false
   }
 
   if (showRightSidebar.value && rightSidebar && !rightSidebar.contains(event.target)) {
-    showRightSidebar.value = false;
+    showRightSidebar.value = false
+  }
+
+  if (openMenuIndex.value !== null) {
+    const currentMenuWrapper = document.querySelectorAll('.menu-wrapper')[openMenuIndex.value]
+    const dropdownMenu = currentMenuWrapper?.querySelector('.dropdown-menu')
+    const toggleButton = currentMenuWrapper?.querySelector('.more-btn')
+
+    const clickedOutsideMenu =
+      dropdownMenu && !dropdownMenu.contains(event.target) &&
+      toggleButton && !toggleButton.contains(event.target)
+
+    if (clickedOutsideMenu) {
+      toggleMenu(openMenuIndex.value)
+    }
   }
 }
+
 
 onMounted(() => {
   document.addEventListener('click', handleClickOutside);
