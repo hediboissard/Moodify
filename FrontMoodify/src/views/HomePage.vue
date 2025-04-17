@@ -60,15 +60,14 @@ Titres Likés
         <img :src="friend.avatar" class="friend-avatar" alt="avatar" />
         <div class="friend-info">
           <h4>{{ friend.username }}</h4>
-          <p class="friend-mood">{{ friend.moodEmoji }} {{ friend.moodText }}</p>
-          <p class="friend-track">🎵 {{ friend.currentTrack }}</p>
-        </div>
         <router-link
           :to="{ name: 'FriendLikes', params: { id: friend.id, username: friend.username } }"
           class="view-likes-btn"
         >
           View Liked Songs
         </router-link>
+        </div>
+
         <button 
           @click="removeFriend(friend)" 
           class="remove-friend-btn"
