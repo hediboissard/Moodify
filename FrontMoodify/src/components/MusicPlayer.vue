@@ -25,11 +25,18 @@
         </div>
 
         <div class="controls">
-          <button @click.stop="prevTrack">⏮️</button>
+          <button @click.stop="prevTrack"> <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+       xmlns="http://www.w3.org/2000/svg" stroke="currentColor"
+       stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M15 18L9 12L15 6" />
+  </svg></button>
           <button @click.stop="togglePlay">
             {{ isPlaying ? '⏸️' : '▶️' }}
           </button>
-          <button @click.stop="nextTrack">⏭️</button>
+          <button @click.stop="nextTrack"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+       stroke-linecap="round" stroke-linejoin="round">
+    <polyline points="9 18 15 12 9 6"></polyline>
+  </svg></button>
         </div>
       </div>
 
@@ -44,7 +51,13 @@
           @input="seek"
         />
         <div class="volume">
-          🔊
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+       xmlns="http://www.w3.org/2000/svg" stroke="currentColor"
+       stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M11 5L6 9H2v6h4l5 4V5z" />
+          <path d="M15.54 8.46a5 5 0 0 1 0 7.07" />
+          <path d="M19.07 4.93a10 10 0 0 1 0 14.14" />
+          </svg>
           <input type="range" min="0" max="1" step="0.01" v-model="volume" @input="updateVolume" />
         </div>
       </div>
