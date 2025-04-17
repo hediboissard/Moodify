@@ -23,11 +23,18 @@
             <button class="more-btn" @click="toggleMenu(index)">⋯</button>
             <div v-if="openMenuIndex === index" class="dropdown-menu">
               <a :href="song.spotify_url" target="_blank" class="dropdown-link">
-                <img src="../../public/logo_spotify.svg" alt="Spotify" class="dropdown-icon" />
+                <svg class="w-5 h-5" viewBox="0 0 168 168" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                <path d="M84,0C37.7,0,0,37.7,0,84s37.7,84,84,84s84-37.7,84-84S130.3,0,84,0z M121.3,120.1c-1.5,2.5-4.7,3.3-7.2,1.8
+                  c-19.8-12.1-44.8-14.9-74.2-8.4c-2.8,0.6-5.5-1.2-6.1-4s1.2-5.5,4-6.1c32.3-7,60.1-3.7,82.2,10.1
+                  C121.9,114.2,122.7,117.5,121.3,120.1z M133.4,97.6c-1.9,3-5.8,3.9-8.7,2c-22.7-14-57.3-18-84.1-10.1c-3.4,1-6.9-0.9-7.9-4.3
+                  c-1-3.4,0.9-6.9,4.3-7.9c31.8-9.2,70.5-4.7,97.5,11.6C134.3,90.8,135.2,94.7,133.4,97.6z M134.9,74.1c-27-16.2-71.5-17.7-97-10
+                  c-4,1.2-8.2-1-9.4-5c-1.2-4,1-8.2,5-9.4c29.6-8.8,79-7.1,110.9,11.7c3.6,2.1,4.8,6.7,2.6,10.3C144.8,75.1,139.1,76.6,134.9,74.1z"/>
+              </svg>
                 Ouvrir dans Spotify
               </a>
 
               <button class="dropdown-link" @click="openPlaylistPopup(song)">
+                <svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-playlist-add"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M19 8h-14" /><path d="M5 12h9" /><path d="M11 16h-6" /><path d="M15 16h6" /><path d="M18 13v6" /></svg>
                 Ajouter à une playlist
               </button>
             </div>
@@ -46,6 +53,13 @@
           <p class="friend-mood">{{ friend.moodEmoji }} {{ friend.moodText }}</p>
           <p class="friend-track">🎵 {{ friend.currentTrack }}</p>
         </div>
+        <button 
+          @click="removeFriend(friend)" 
+          class="remove-friend-btn"
+          title="Retirer cet ami"
+        >
+          ❌
+        </button>
       </div>
     </Sidebar>
 
@@ -98,6 +112,13 @@
     <img :src="playlist.images?.[0]?.url || defaultImage" class="playlist-image" />
     <div class="playlist-name">{{ playlist.name }}</div>
   </div>
+  <li @click="createNewPlaylist" class="playlist-card create-card">
+  <div class="playlist-image">
+    <span class="plus-icon">＋</span>
+  </div>
+  <p>Nouvelle playlist</p>
+</li>
+
 </div>
 
     <p v-else>Aucune playlist trouvée.</p>
@@ -271,6 +292,82 @@ async function addTrackToPlaylist(playlistId) {
   }
 }
 
+async function fetchUserPlaylists() {
+  const accessToken = localStorage.getItem('access_token')
+  if (!accessToken) return toast.error("Pas de token Spotify")
+
+  try {
+    const res = await axios.get('https://api.spotify.com/v1/me/playlists?limit=50', {
+      headers: { Authorization: `Bearer ${accessToken}` }
+    })
+    userPlaylists.value = res.data.items
+    console.log("Playlists récupérées 🎧", res.data.items)
+    
+
+
+  } catch (err) {
+    console.error("❌ Erreur récupération playlists :", err)
+    toast.error("Erreur récupération des playlists")
+  }
+}
+
+async function createNewPlaylist() {
+  const accessToken = localStorage.getItem('access_token')
+  if (!accessToken) return toast.error("Pas de token Spotify")
+
+  const playlistName = prompt("Nom de la nouvelle playlist :")
+  if (!playlistName) return
+
+  try {
+    const userRes = await axios.get('https://api.spotify.com/v1/me', {
+      headers: { Authorization: `Bearer ${accessToken}` }
+    })
+    const userId = userRes.data.id
+
+    // Création de la playlist
+    const playlistRes = await axios.post(
+      `https://api.spotify.com/v1/users/${userId}/playlists`,
+      {
+        name: playlistName,
+        public: false,
+        description: "Playlist créée depuis Moodify 🎧"
+      },
+      {
+        headers: { Authorization: `Bearer ${accessToken}` }
+      }
+    )
+
+
+    const newPlaylistId = playlistRes.data.id
+
+    // Ajouter le morceau
+    await axios.post(
+      `https://api.spotify.com/v1/playlists/${newPlaylistId}/tracks`,
+      {
+        uris: [selectedTrack.value.spotify_uri]
+      },
+      {
+        headers: { Authorization: `Bearer ${accessToken}` }
+      }
+    )
+
+    toast.success(`✅ Playlist « ${playlistName} » créée et morceau ajouté !`)
+
+    // 🔁 Petite pause pour laisser Spotify "propager" la playlist
+    await new Promise(resolve => setTimeout(resolve, 500))
+
+    // 🔄 Recharge les playlists
+    await fetchUserPlaylists()
+
+  } catch (err) {
+    console.error('❌ Erreur création playlist:', err)
+    toast.error("Erreur lors de la création")
+  }
+}
+
+
+
+
 
 
 
@@ -325,15 +422,44 @@ function toggleLikedExpanded() {
 }
 const fetchFriends = async () => {
   try {
-    const currentUserId = localStorage.getItem('userId')
-    const response = await axios.get(`http://localhost:3000/api/friends/${currentUserId}`)
-    friends.value = response.data
+    // Récupérer les amis du localStorage
+    const storedFriends = localStorage.getItem('friends')
+    if (storedFriends) {
+      friends.value = JSON.parse(storedFriends)
+    } else {
+      friends.value = [] // Si pas d'amis, tableau vide
+    }
   } catch (error) {
     console.error('❌ Erreur lors de la récupération des amis:', error)
+    friends.value = []
   }
 }
 
-
+const removeFriend = (friend) => {
+  try {
+    // Récupérer les amis actuels du localStorage
+    const storedFriends = localStorage.getItem('friends')
+    let friends = storedFriends ? JSON.parse(storedFriends) : []
+    
+    // Filtrer pour retirer l'ami
+    friends = friends.filter(f => f.id !== friend.id)
+    
+    // Mettre à jour le localStorage
+    localStorage.setItem('friends', JSON.stringify(friends))
+    
+    // Mettre à jour l'état local
+    fetchFriends()
+    
+    // Changer le toast.success en toast.error pour avoir la notification en rouge
+    toast.error(`❌ ${friend.username} a été retiré de vos amis`, {
+      timeout: 3000,
+      position: "bottom-right",
+    })
+  } catch (error) {
+    console.error('❌ Erreur lors de la suppression de l\'ami:', error)
+    toast.error("Erreur lors de la suppression de l'ami")
+  }
+}
 
 onMounted(() => {
   const script = document.createElement('script')
@@ -710,6 +836,7 @@ watch(
   padding: 0.5rem;
   background-color: #2a2a2a;
   border-radius: 8px;
+  position: relative;  /* Ajoutez cette ligne si pas déjà présente */
 }
 
 .friend-avatar {
@@ -802,6 +929,7 @@ watch(
   flex-direction: column;
   align-items: center;
   padding: 10px;
+  text-align: center;
 }
 
 .playlist-card:hover {
@@ -819,10 +947,26 @@ watch(
 .playlist-card span {
   margin-top: 8px;
   font-size: 14px;
-  text-align: center;
   color: #ddd;
 }
 
+/* 🆕 Style spécial pour la "carte création" */
+.create-card {
+  background-color: #1DB95422;
+  border: 2px dashed #1DB954;
+  justify-content: center;
+}
+
+.create-card .plus-icon {
+  font-size: 48px;
+  color: #1DB954;
+  margin-bottom: 10px;
+}
+
+.create-card span {
+  font-weight: bold;
+  color: #1DB954;
+}
 
 .close-btn {
   margin-top: 20px;
@@ -835,6 +979,7 @@ watch(
   display: block;
   margin-left: auto;
 }
+
 
 
 
