@@ -171,11 +171,6 @@ npm run dev
 
 ---
 
-## 📄 Licence
-
-Ce projet est sous licence MIT. Vous êtes libre de l'utiliser, de le modifier et de le distribuer.
-
----
 
 ## 💡 Remerciements
 
