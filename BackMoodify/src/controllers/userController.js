@@ -11,7 +11,7 @@ const getProfile = async (req, res) => {
       id: user.id,
       username: user.username,
       email: user.email,
-      avatar: user.avatar, // Inclure l'avatar dans la réponse
+      avatar: user.avatar,
     });
   } catch (err) {
     console.error("❌ Erreur getProfile :", err);

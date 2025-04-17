@@ -268,7 +268,6 @@ function toggleMenu(index) {
 }
 
 async function openPlaylistPopup(song) {
-  // Si le champ spotify_uri n'existe pas, on le dérive depuis l'URL
   const uri = song.spotify_uri || (
     song.spotify_url?.includes('/track/')
       ? `spotify:track:${song.spotify_url.split('/track/')[1].split('?')[0]}`
@@ -465,7 +464,7 @@ const fetchFriends = async () => {
     if (storedFriends) {
       friends.value = JSON.parse(storedFriends)
     } else {
-      friends.value = [] // Si pas d'amis, tableau vide
+      friends.value = []
     }
   } catch (error) {
     console.error('❌ Erreur lors de la récupération des amis:', error)
@@ -614,14 +613,12 @@ watch(
       logo2.style.fill = newColor
     }
 
-    // ✅ .link-button border color
     const linkButtons = document.querySelectorAll('.links button')
     linkButtons.forEach(btn => {
       btn.style.borderColor = newColor
       btn.style.color = newColor
     })
 
-    // ✅ .links a.active color or border (adjust as needed)
     const activeLinks = document.querySelectorAll('.links a.active')
     activeLinks.forEach(link => {
       link.style.color = newColor
@@ -661,7 +658,7 @@ watch(
 }
 
 .track-item {
-  position: relative; /* ⬅️ Ajout nécessaire */
+  position: relative;
   display: flex;
   align-items: center;
   margin-bottom: 1rem;

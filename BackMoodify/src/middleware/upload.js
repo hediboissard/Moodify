@@ -4,7 +4,7 @@ const path = require('path')
 // Chemin de stockage
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, 'public/uploads') // <== ce dossier doit exister
+    cb(null, 'public/uploads')
   },
   filename: (req, file, cb) => {
     const ext = path.extname(file.originalname)

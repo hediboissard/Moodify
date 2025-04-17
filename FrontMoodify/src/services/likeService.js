@@ -6,7 +6,7 @@ export const saveLikedTrack = async (track) => {
   const spotify_id = localStorage.getItem('spotify_id');
   if (!spotify_id) throw new Error('Aucun spotify_id trouvé');
 
-  const payload = { track, spotify_id }; // Ensure spotify_id is included
+  const payload = { track, spotify_id };
   const res = await axios.post(API_URL, payload);
   return res.data;
 };
@@ -23,7 +23,7 @@ export const removeLikedTrack = async (track) => {
   const spotify_id = localStorage.getItem('spotify_id');
   if (!spotify_id) throw new Error('Aucun spotify_id trouvé');
 
-  const payload = { title: track.title, artist: track.artist, spotify_id }; // Match backend expectations
+  const payload = { title: track.title, artist: track.artist, spotify_id };
   const res = await axios.delete(`http://localhost:3000/api/users/likes`, {
     data: payload,
   });
