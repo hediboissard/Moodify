@@ -10,7 +10,17 @@
       <p class="sidebar-title" @click="toggleLikedExpanded" style="cursor: pointer;">
         <span v-if="likedExpanded">⬇️</span>
         <span v-else>➡️</span>
-        ❤️ Titres Likés
+        <span v-else>➡️</span>
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="20" height="20"
+     viewBox="0 0 24 24"
+     fill="currentColor"
+     class="icon icon-tabler icons-tabler-filled icon-tabler-heart"
+     style="vertical-align: middle; margin-right: 5px;">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M6.979 3.074a6 6 0 0 1 4.988 1.425l.037 .033l.034 -.03a6 6 0 0 1 4.733 -1.44l.246 .036a6 6 0 0 1 3.364 10.008l-.18 .185l-.048 .041l-7.45 7.379a1 1 0 0 1 -1.313 .082l-.094 -.082l-7.493 -7.422a6 6 0 0 1 3.176 -10.215z" />
+</svg>
+Titres Likés
       </p>
       <div v-if="likedExpanded">
         <div v-for="(song, index) in likedSongs" :key="'liked-' + index" class="track-item">
@@ -53,6 +63,12 @@
           <p class="friend-mood">{{ friend.moodEmoji }} {{ friend.moodText }}</p>
           <p class="friend-track">🎵 {{ friend.currentTrack }}</p>
         </div>
+        <router-link
+          :to="{ name: 'FriendLikes', params: { id: friend.id, username: friend.username } }"
+          class="view-likes-btn"
+        >
+          View Liked Songs
+        </router-link>
         <button 
           @click="removeFriend(friend)" 
           class="remove-friend-btn"
@@ -87,8 +103,32 @@
           <p>{{ currentSong.artist }}</p>
         </div>
         <button @click="toggleLikeCurrentTrack" class="like-button">
-          {{ isLiked(currentSong) ? '❤️' : '🤍' }}
-        </button>
+  <!-- Cœur rempli (liké) -->
+  <svg v-if="isLiked(currentSong)"
+    xmlns="http://www.w3.org/2000/svg"
+    width="24" height="24"
+    viewBox="0 0 24 24"
+    fill="currentColor"
+    class="icon icon-tabler icons-tabler-filled icon-tabler-heart">
+    <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+    <path d="M6.979 3.074a6 6 0 0 1 4.988 1.425l.037 .033l.034 -.03a6 6 0 0 1 4.733 -1.44l.246 .036a6 6 0 0 1 3.364 10.008l-.18 .185l-.048 .041l-7.45 7.379a1 1 0 0 1 -1.313 .082l-.094 -.082l-7.493 -7.422a6 6 0 0 1 3.176 -10.215z" />
+  </svg>
+
+  <!-- Cœur vide (non liké) -->
+  <svg v-else
+    xmlns="http://www.w3.org/2000/svg"
+    width="24" height="24"
+    viewBox="0 0 24 24"
+    fill="none" stroke="currentColor"
+    stroke-width="2"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    class="icon icon-tabler icons-tabler-outline icon-tabler-heart">
+    <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+    <path d="M19.5 12.572l-7.5 7.428l-7.5 -7.428a5 5 0 1 1 7.5 -6.566a5 5 0 1 1 7.5 6.572" />
+  </svg>
+</button>
+
       </div>
     </div>
 
@@ -131,7 +171,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, watch } from 'vue'
+import { ref, computed, onMounted, watch, onBeforeUnmount } from 'vue'
 import axios from 'axios';
 import Navbar from '@/components/Navbar.vue'
 import MusicPlayer from '@/components/MusicPlayer.vue'
@@ -460,6 +500,27 @@ const removeFriend = (friend) => {
     toast.error("Erreur lors de la suppression de l'ami")
   }
 }
+
+function handleClickOutside(event) {
+  const leftSidebar = document.querySelector('.sidebar.left');
+  const rightSidebar = document.querySelector('.sidebar.right');
+
+  if (showLeftSidebar.value && leftSidebar && !leftSidebar.contains(event.target)) {
+    showLeftSidebar.value = false;
+  }
+
+  if (showRightSidebar.value && rightSidebar && !rightSidebar.contains(event.target)) {
+    showRightSidebar.value = false;
+  }
+}
+
+onMounted(() => {
+  document.addEventListener('click', handleClickOutside);
+});
+
+onBeforeUnmount(() => {
+  document.removeEventListener('click', handleClickOutside);
+});
 
 onMounted(() => {
   const script = document.createElement('script')
@@ -834,33 +895,30 @@ watch(
   align-items: center;
   margin-bottom: 1rem;
   padding: 1rem;
-  background-color: rgba(42, 42, 42, 0.8);
-  border-radius: 12px;
-  position: relative;
-  transition: all 0.3s ease;
-  border: 1px solid transparent;
+  background-color: #2b2b2b;
+  border-radius: 10px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
 
 .friend-card:hover {
-  background-color: rgba(60, 60, 60, 0.9);
-  transform: translateY(-2px);
-  border-color: #1DB954;
-  box-shadow: 0 4px 12px rgba(29, 185, 84, 0.2);
+  transform: translateY(-3px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
 }
 
 .friend-avatar {
   width: 50px;
   height: 50px;
-  object-fit: cover;
   border-radius: 50%;
+  object-fit: cover;
   margin-right: 1rem;
-  border: 2px solid #1DB954;
-  box-shadow: 0 0 10px rgba(29, 185, 84, 0.3);
-  transition: transform 0.3s ease;
+  border: 2px solid #1db954;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .friend-card:hover .friend-avatar {
   transform: scale(1.1);
+  box-shadow: 0 0 10px rgba(29, 185, 84, 0.5);
 }
 
 .friend-info {
@@ -869,56 +927,46 @@ watch(
 
 .friend-info h4 {
   margin: 0;
-  font-size: 1.1rem;
-  font-weight: 600;
+  font-size: 1rem;
+  font-weight: bold;
   color: #fff;
 }
 
 .friend-mood {
-  margin: 4px 0;
+  margin: 5px 0;
   font-size: 0.9rem;
-  color: #1DB954;
+  color: #1db954;
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 5px;
 }
 
 .friend-track {
   font-size: 0.85rem;
-  color: #a0a0a0;
-  margin: 2px 0;
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  max-width: 200px;
+  color: #aaa;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
 .remove-friend-btn {
-  opacity: 0;
-  position: absolute;
-  right: 1rem;
-  top: 50%;
-  transform: translateY(-50%);
   background: none;
   border: none;
-  color: #ff4444;
+  color: #ff4d4d;
   font-size: 1.2rem;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: transform 0.3s ease, background-color 0.3s ease;
   padding: 8px;
   border-radius: 50%;
 }
 
 .friend-card:hover .remove-friend-btn {
-  opacity: 1;
+  transform: scale(1.2);
+  background-color: rgba(255, 77, 77, 0.1);
 }
 
 .remove-friend-btn:hover {
-  background-color: rgba(255, 68, 68, 0.1);
-  transform: translateY(-50%) scale(1.2);
+  background-color: rgba(255, 77, 77, 0.2);
 }
 
 /* Style pour le titre de la section amis */
@@ -1054,6 +1102,22 @@ watch(
   cursor: pointer;
   display: block;
   margin-left: auto;
+}
+
+.view-likes-btn {
+  display: inline-block;
+  margin-top: 8px;
+  padding: 6px 12px;
+  background-color: #1db954;
+  color: white;
+  border-radius: 6px;
+  text-decoration: none;
+  font-size: 0.9rem;
+  transition: background-color 0.3s ease;
+}
+
+.view-likes-btn:hover {
+  background-color: #1ed760;
 }
 
 
