@@ -165,7 +165,7 @@ Titres Likés
 </template>
 
 <script setup>
-import { ref, computed, onMounted, watch } from 'vue'
+import { ref, computed, onMounted, watch, onBeforeUnmount } from 'vue'
 import axios from 'axios';
 import Navbar from '@/components/Navbar.vue'
 import MusicPlayer from '@/components/MusicPlayer.vue'
@@ -494,6 +494,27 @@ const removeFriend = (friend) => {
     toast.error("Erreur lors de la suppression de l'ami")
   }
 }
+
+function handleClickOutside(event) {
+  const leftSidebar = document.querySelector('.sidebar.left');
+  const rightSidebar = document.querySelector('.sidebar.right');
+
+  if (showLeftSidebar.value && leftSidebar && !leftSidebar.contains(event.target)) {
+    showLeftSidebar.value = false;
+  }
+
+  if (showRightSidebar.value && rightSidebar && !rightSidebar.contains(event.target)) {
+    showRightSidebar.value = false;
+  }
+}
+
+onMounted(() => {
+  document.addEventListener('click', handleClickOutside);
+});
+
+onBeforeUnmount(() => {
+  document.removeEventListener('click', handleClickOutside);
+});
 
 onMounted(() => {
   const script = document.createElement('script')
