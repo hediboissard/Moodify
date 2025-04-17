@@ -1,17 +1,27 @@
 const express = require('express');
+const jwt = require('jsonwebtoken');
 const router = express.Router();
 const { register, login } = require('../controllers/authController');
 
-// ✅ À AJOUTER EN HAUT
+// ✅ Spotify & BDD
 const axios = require('axios');
 const querystring = require('querystring');
-const db = require('../db'); // ← attention au bon chemin selon ta structure
+const db = require('../db'); // ← Vérifie que ce chemin est correct selon ton projet
 
-// Routes API :
+// Fonction pour générer un token JWT
+const generateToken = (user) => {
+  return jwt.sign(
+    { id: user.id, email: user.email },
+    process.env.JWT_SECRET,
+    { expiresIn: '7d' }
+  );
+};
+
+// Routes API de base
 router.post('/register', register);
 router.post('/login', login);
 
-// Redirige vers Spotify login
+// Redirection vers Spotify
 router.get('/spotify/login', (req, res) => {
   const scope = 'user-read-email user-read-private playlist-modify-public playlist-modify-private';
   const queryParams = querystring.stringify({
@@ -23,11 +33,12 @@ router.get('/spotify/login', (req, res) => {
   res.redirect(`https://accounts.spotify.com/authorize?${queryParams}`);
 });
 
-// Callback Spotify : échange code ↔ access_token + récupère infos utilisateur
+// Callback Spotify → Génère token et récupère profil
 router.get('/spotify/callback', async (req, res) => {
   const code = req.query.code;
 
   try {
+    // 🔁 Échange le code contre un access_token
     const tokenRes = await axios.post('https://accounts.spotify.com/api/token',
       new URLSearchParams({
         grant_type: 'authorization_code',
@@ -41,32 +52,38 @@ router.get('/spotify/callback', async (req, res) => {
 
     const accessToken = tokenRes.data.access_token;
 
+    // Récupère les infos de l'utilisateur Spotify
     const userRes = await axios.get('https://api.spotify.com/v1/me', {
       headers: { Authorization: `Bearer ${accessToken}` },
     });
 
     const { id: spotify_id, display_name, email, images } = userRes.data;
-    const avatar = userRes.data.images?.[0]?.url || null;
+    const avatar = images?.[0]?.url || null;
 
-
-    const [existingUser] = await db.promise().query(
+    let [existingUser] = await db.promise().query(
       'SELECT * FROM users WHERE spotify_id = ?',
       [spotify_id]
     );
 
+    let user = existingUser[0];
 
-
-    if (existingUser.length === 0) {
-        await db.promise().query(
-            'INSERT INTO users (email, username, spotify_id, avatar) VALUES (?, ?, ?, ?)',
-            [email, display_name || 'Spotify User', spotify_id, avatar]
-          );
+    // Si l'utilisateur n'existe pas encore, on le crée
+    if (!user) {
+      const [result] = await db.promise().query(
+        'INSERT INTO users (email, username, spotify_id, avatar) VALUES (?, ?, ?, ?)',
+        [email, display_name || 'Spotify User', spotify_id, avatar]
+      );
+      const [newUser] = await db.promise().query('SELECT * FROM users WHERE id = ?', [result.insertId]);
+      user = newUser[0];
     }
 
-    // Redirige vers le frontend avec l'ID Spotify en paramètre
-    res.redirect(`http://localhost:5173/?spotify_id=${spotify_id}&access_token=${accessToken}`);
+    // Génère un token JWT
+    const token = generateToken(user);
+
+    // 🔁 Redirige vers le frontend avec token + spotify_id
+    res.redirect(`http://localhost:5173/?token=${token}&spotify_id=${spotify_id}`);
   } catch (err) {
-    console.error('Erreur Spotify auth:', err);
+    console.error('❌ Erreur Spotify auth:', err);
     res.status(500).send('Erreur lors de l’authentification Spotify');
   }
 });
