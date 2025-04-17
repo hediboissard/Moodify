@@ -31,7 +31,7 @@
     <path d="M15 18L9 12L15 6" />
   </svg></button>
           <button @click.stop="togglePlay">
-            {{ isPlaying ? '⏸️' : '▶️' }}
+            {{ isPlaying ? '⏸️' : '▶️cd' }}
           </button>
           <button @click.stop="nextTrack"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
        stroke-linecap="round" stroke-linejoin="round">
