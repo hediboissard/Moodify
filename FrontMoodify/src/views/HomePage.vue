@@ -46,6 +46,12 @@
           <p class="friend-mood">{{ friend.moodEmoji }} {{ friend.moodText }}</p>
           <p class="friend-track">🎵 {{ friend.currentTrack }}</p>
         </div>
+        <router-link
+          :to="{ name: 'FriendLikes', params: { id: friend.id, username: friend.username } }"
+          class="view-likes-btn"
+        >
+          View Liked Songs
+        </router-link>
         <button 
           @click="removeFriend(friend)" 
           class="remove-friend-btn"
@@ -827,33 +833,30 @@ watch(
   align-items: center;
   margin-bottom: 1rem;
   padding: 1rem;
-  background-color: rgba(42, 42, 42, 0.8);
-  border-radius: 12px;
-  position: relative;
-  transition: all 0.3s ease;
-  border: 1px solid transparent;
+  background-color: #2b2b2b;
+  border-radius: 10px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
 
 .friend-card:hover {
-  background-color: rgba(60, 60, 60, 0.9);
-  transform: translateY(-2px);
-  border-color: #1DB954;
-  box-shadow: 0 4px 12px rgba(29, 185, 84, 0.2);
+  transform: translateY(-3px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
 }
 
 .friend-avatar {
   width: 50px;
   height: 50px;
-  object-fit: cover;
   border-radius: 50%;
+  object-fit: cover;
   margin-right: 1rem;
-  border: 2px solid #1DB954;
-  box-shadow: 0 0 10px rgba(29, 185, 84, 0.3);
-  transition: transform 0.3s ease;
+  border: 2px solid #1db954;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .friend-card:hover .friend-avatar {
   transform: scale(1.1);
+  box-shadow: 0 0 10px rgba(29, 185, 84, 0.5);
 }
 
 .friend-info {
@@ -862,56 +865,46 @@ watch(
 
 .friend-info h4 {
   margin: 0;
-  font-size: 1.1rem;
-  font-weight: 600;
+  font-size: 1rem;
+  font-weight: bold;
   color: #fff;
 }
 
 .friend-mood {
-  margin: 4px 0;
+  margin: 5px 0;
   font-size: 0.9rem;
-  color: #1DB954;
+  color: #1db954;
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 5px;
 }
 
 .friend-track {
   font-size: 0.85rem;
-  color: #a0a0a0;
-  margin: 2px 0;
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  max-width: 200px;
+  color: #aaa;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
 .remove-friend-btn {
-  opacity: 0;
-  position: absolute;
-  right: 1rem;
-  top: 50%;
-  transform: translateY(-50%);
   background: none;
   border: none;
-  color: #ff4444;
+  color: #ff4d4d;
   font-size: 1.2rem;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: transform 0.3s ease, background-color 0.3s ease;
   padding: 8px;
   border-radius: 50%;
 }
 
 .friend-card:hover .remove-friend-btn {
-  opacity: 1;
+  transform: scale(1.2);
+  background-color: rgba(255, 77, 77, 0.1);
 }
 
 .remove-friend-btn:hover {
-  background-color: rgba(255, 68, 68, 0.1);
-  transform: translateY(-50%) scale(1.2);
+  background-color: rgba(255, 77, 77, 0.2);
 }
 
 /* Style pour le titre de la section amis */
@@ -1047,6 +1040,22 @@ watch(
   cursor: pointer;
   display: block;
   margin-left: auto;
+}
+
+.view-likes-btn {
+  display: inline-block;
+  margin-top: 8px;
+  padding: 6px 12px;
+  background-color: #1db954;
+  color: white;
+  border-radius: 6px;
+  text-decoration: none;
+  font-size: 0.9rem;
+  transition: background-color 0.3s ease;
+}
+
+.view-likes-btn:hover {
+  background-color: #1ed760;
 }
 
 
