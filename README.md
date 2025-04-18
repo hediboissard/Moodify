@@ -170,7 +170,9 @@ npm run dev
    - Assurez-vous que les informations de connexion dans .env sont correctes.
 
 ---
+## 📬 Contact
 
+Pour toute question ou retour : boissardhedi@gmail.com
 
 ## 💡 Remerciements
 
