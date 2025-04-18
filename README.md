@@ -1,7 +1,7 @@
 
 # Moodify 🎧
 
-Moodify est une application web fullstack **faite en 4 jours** qui génère des playlists Spotify en fonction de votre humeur. Elle est construite avec **Vue.js** pour le frontend et **Node.js** pour le backend. Si dans les commits vous voyez un Ace92Dev, c'est mon 2ème compte github.
+Moodify est une application web fullstack **faite en 4 jours** qui génère des playlists Spotify en fonction de votre humeur. Elle est construite avec **Vue.js** pour le frontend et **Node.js** pour le backend. Si dans les commits vous voyez un Ace92Dev, c'est mon 2ème compte Github.
 
 ---
 
