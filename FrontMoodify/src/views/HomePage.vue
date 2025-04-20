@@ -3,7 +3,6 @@
 
     <Navbar :color="currentMood.color" />
 
-    <!-- Particles background -->
     <div id="particles-js"></div>
 
     <Sidebar :open="showLeftSidebar" side="left" @toggle="showLeftSidebar = !showLeftSidebar">
@@ -60,15 +59,14 @@ Titres Likés
         <img :src="friend.avatar" class="friend-avatar" alt="avatar" />
         <div class="friend-info">
           <h4>{{ friend.username }}</h4>
-          <p class="friend-mood">{{ friend.moodEmoji }} {{ friend.moodText }}</p>
-          <p class="friend-track">🎵 {{ friend.currentTrack }}</p>
-        </div>
         <router-link
           :to="{ name: 'FriendLikes', params: { id: friend.id, username: friend.username } }"
           class="view-likes-btn"
         >
           View Liked Songs
         </router-link>
+        </div>
+
         <button 
           @click="removeFriend(friend)" 
           class="remove-friend-btn"
@@ -270,7 +268,6 @@ function toggleMenu(index) {
 }
 
 async function openPlaylistPopup(song) {
-  // Si le champ spotify_uri n'existe pas, on le dérive depuis l'URL
   const uri = song.spotify_uri || (
     song.spotify_url?.includes('/track/')
       ? `spotify:track:${song.spotify_url.split('/track/')[1].split('?')[0]}`
@@ -467,7 +464,7 @@ const fetchFriends = async () => {
     if (storedFriends) {
       friends.value = JSON.parse(storedFriends)
     } else {
-      friends.value = [] // Si pas d'amis, tableau vide
+      friends.value = []
     }
   } catch (error) {
     console.error('❌ Erreur lors de la récupération des amis:', error)
@@ -477,20 +474,15 @@ const fetchFriends = async () => {
 
 const removeFriend = (friend) => {
   try {
-    // Récupérer les amis actuels du localStorage
     const storedFriends = localStorage.getItem('friends')
     let friends = storedFriends ? JSON.parse(storedFriends) : []
     
-    // Filtrer pour retirer l'ami
     friends = friends.filter(f => f.id !== friend.id)
     
-    // Mettre à jour le localStorage
     localStorage.setItem('friends', JSON.stringify(friends))
     
-    // Mettre à jour l'état local
     fetchFriends()
     
-    // Changer le toast.success en toast.error pour avoir la notification en rouge
     toast.error(`❌ ${friend.username} a été retiré de vos amis`, {
       timeout: 3000,
       position: "bottom-right",
@@ -502,17 +494,32 @@ const removeFriend = (friend) => {
 }
 
 function handleClickOutside(event) {
-  const leftSidebar = document.querySelector('.sidebar.left');
-  const rightSidebar = document.querySelector('.sidebar.right');
+  const leftSidebar = document.querySelector('.sidebar.left')
+  const rightSidebar = document.querySelector('.sidebar.right')
 
   if (showLeftSidebar.value && leftSidebar && !leftSidebar.contains(event.target)) {
-    showLeftSidebar.value = false;
+    showLeftSidebar.value = false
   }
 
   if (showRightSidebar.value && rightSidebar && !rightSidebar.contains(event.target)) {
-    showRightSidebar.value = false;
+    showRightSidebar.value = false
+  }
+
+  if (openMenuIndex.value !== null) {
+    const currentMenuWrapper = document.querySelectorAll('.menu-wrapper')[openMenuIndex.value]
+    const dropdownMenu = currentMenuWrapper?.querySelector('.dropdown-menu')
+    const toggleButton = currentMenuWrapper?.querySelector('.more-btn')
+
+    const clickedOutsideMenu =
+      dropdownMenu && !dropdownMenu.contains(event.target) &&
+      toggleButton && !toggleButton.contains(event.target)
+
+    if (clickedOutsideMenu) {
+      toggleMenu(openMenuIndex.value)
+    }
   }
 }
+
 
 onMounted(() => {
   document.addEventListener('click', handleClickOutside);
@@ -606,14 +613,12 @@ watch(
       logo2.style.fill = newColor
     }
 
-    // ✅ .link-button border color
     const linkButtons = document.querySelectorAll('.links button')
     linkButtons.forEach(btn => {
       btn.style.borderColor = newColor
       btn.style.color = newColor
     })
 
-    // ✅ .links a.active color or border (adjust as needed)
     const activeLinks = document.querySelectorAll('.links a.active')
     activeLinks.forEach(link => {
       link.style.color = newColor
@@ -653,7 +658,7 @@ watch(
 }
 
 .track-item {
-  position: relative; /* ⬅️ Ajout nécessaire */
+  position: relative;
   display: flex;
   align-items: center;
   margin-bottom: 1rem;

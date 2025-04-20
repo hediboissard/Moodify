@@ -12,6 +12,7 @@ onMounted(() => {
   const params = new URLSearchParams(window.location.search)
   const token = params.get('token')
   const spotifyId = params.get('spotify_id')
+  const accessToken = params.get('access_token')
 
   if (token) {
     console.log("🔑 [App.vue] Token JWT reçu:", token)
@@ -23,7 +24,15 @@ onMounted(() => {
     localStorage.setItem('spotify_id', spotifyId)
   }
 
-  // Redirige vers /home seulement si un vrai token est présent
+  if (accessToken) {
+    console.log("🟢 [App.vue] Access Token Spotify reçu:", accessToken)
+    localStorage.setItem('access_token', accessToken)
+  }
+
+  if (token || accessToken || spotifyId) {
+    window.history.replaceState({}, document.title, "/")
+  }
+
   if (token) {
     router.push('/home')
   }

@@ -71,7 +71,7 @@ const newUsername = ref('')
 const fileInput = ref(null);
 
 const triggerFileInput = () => {
-  fileInput.value.click(); // Ouvre la boîte de dialogue de sélection de fichier
+  fileInput.value.click();
 };
 
 /// 🔒 Fonction pour uploader l'avatar

@@ -6,7 +6,7 @@ const { register, login } = require('../controllers/authController');
 // ✅ Spotify & BDD
 const axios = require('axios');
 const querystring = require('querystring');
-const db = require('../db'); // ← Vérifie que ce chemin est correct selon ton projet
+const db = require('../db');
 
 // Fonction pour générer un token JWT
 const generateToken = (user) => {
@@ -33,7 +33,7 @@ router.get('/spotify/login', (req, res) => {
   res.redirect(`https://accounts.spotify.com/authorize?${queryParams}`);
 });
 
-// Callback Spotify → Génère token et récupère profil
+// Callback Spotify
 router.get('/spotify/callback', async (req, res) => {
   const code = req.query.code;
 
@@ -81,7 +81,7 @@ router.get('/spotify/callback', async (req, res) => {
     const token = generateToken(user);
 
     // 🔁 Redirige vers le frontend avec token + spotify_id
-    res.redirect(`http://localhost:5173/?token=${token}&spotify_id=${spotify_id}`);
+    res.redirect(`http://localhost:5173/?token=${token}&spotify_id=${spotify_id}&access_token=${accessToken}`)
   } catch (err) {
     console.error('❌ Erreur Spotify auth:', err);
     res.status(500).send('Erreur lors de l’authentification Spotify');

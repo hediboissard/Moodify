@@ -5,16 +5,14 @@ import FriendsPage from "../views/FriendsPage.vue";
 import LoginPage from "../views/LoginPage.vue";
 import RegisterPage from "../views/RegisterPage.vue";
 import ProfilPage from "../views/ProfilPage.vue";
-import MoodTest from "../components/MoodTest.vue";
 import FriendLikesPage from '../views/FriendLikesPage.vue';
 
 const routes = [
   { path: "/", name: "Login", component: LoginPage },
   { path: "/register", name: "Register", component: RegisterPage },
   { path: "/home", name: "Home", component: HomePage, meta: { requiresAuth: true } },
-  { path: "/friends", name: "Friends", component: FriendsPage, meta: { requiresAuth: true } },
+  { path: "/friends", name: "FriendsPage", component: FriendsPage, meta: { requiresAuth: true } },
   { path: "/profil", name: "Profil", component: ProfilPage, meta: { requiresAuth: true } },
-  { path: "/moodTest", name: "Moodtest", component: MoodTest },
   {
     path: '/friends/:id/likes',
     name: 'FriendLikes',

@@ -158,7 +158,7 @@ router.delete('/likes', async (req, res) => {
 router.delete('/delete', authMiddleware, async (req, res) => {
   try {
     const userId = req.user.id;
-    await User.deleteUserById(userId); // ✅ utilise le bon nom de fonction
+    await User.deleteUserById(userId);
     res.json({ message: '✅ Compte supprimé avec succès.' });
   } catch (err) {
     console.error("❌ Erreur suppression compte :", err);
