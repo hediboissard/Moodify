@@ -32,7 +32,7 @@ npm install
 
 ---
 
-### 3. Configurer les fichiers `.env`
+### 3. Configurer les fichier `.env`
 
 #### 📦 Backend (`BackMoodify/.env`)
 Créez un fichier `.env` dans le dossier `BackMoodify` avec les variables suivantes :
