@@ -27,7 +27,7 @@ npm install
 
 ---
 
-### 3. Configurer les fichiers `.env`
+### 3. Configurer les fichier `.env`
 
 #### 📦 Backend (`backend/.env`)
 ```env

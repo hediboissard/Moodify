@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  backend:
+    build: ./BackMoodify
+    volumes:
+      - ./BackMoodify:/app
+    ports:
+      - "3000:3000"
+    command: npm run dev
+
+  frontend:
+    build: ./FrontMoodify
+    ports:
+      - "8083:80"
+    depends_on:
+      - backend
