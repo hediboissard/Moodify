@@ -58,7 +58,7 @@ cd ../FrontendMoodify
 npm run dev
 
 
----
+--
 
 ## ✅ Prérequis
 
