@@ -1,22 +1,51 @@
 :root {
-  --green-main: #00ff5f;
-  --black-main: #121212;
-  --gray-main: #1b1b1b;
+  --onyx:       #011502;
+  --evergreen:  #01200F;
+  --teal:       #104F55;
+  --pine:       #32746D;
+  --muted:      #9EC5AB;
+  --white:      #F0F7F2;
+  --gray:       rgba(158, 197, 171, 0.15);
+  --border:     rgba(158, 197, 171, 0.18);
+  --glass:      rgba(1, 32, 15, 0.6);
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
 }
 
 body {
   margin: 0;
-  font-family: Arial, sans-serif;
-  background: linear-gradient(145deg, #1e1e1e 0%, #2a2a2a 100%);
-  color: white;
+  font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+  background: radial-gradient(ellipse at 40% 30%, #01200F 0%, #011502 70%);
+  background-attachment: fixed;
+  color: var(--white);
+  min-height: 100vh;
 }
 
 #moodify {
   font-family: "Rubik Mono One", monospace;
   font-weight: 400;
   font-style: normal;
+  color: var(--muted);
+  letter-spacing: 0.02em;
 }
 
 svg {
-  transition: color 0.4s ease;
+  transition: color 0.3s ease;
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--evergreen);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--teal);
+  border-radius: 3px;
+}
+
+input, button, a {
+  font-family: inherit;
 }

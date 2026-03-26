@@ -1,128 +1,126 @@
 <template>
-    <nav class="navbar">
-      <router-link to="/home" class="logo">
-        <svg alt="Logo" class="logo-img" width="101" height="101" viewBox="0 0 101 101" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <g id="LOGO">
-          <path id="Ellipse 1" d="M22.597 22.5969C18.6918 18.6916 12.2582 18.6514 9.20664 23.2546C7.09989 26.4327 5.35752 29.8504 4.02019 33.4445C1.51609 40.1742 0.490881 47.3644 1.0143 54.5259C1.53773 61.6873 3.5975 68.652 7.05351 74.9462C10.5095 81.2403 15.2807 86.7163 21.0424 91.0014C26.8041 95.2866 33.4212 98.2806 40.4436 99.7795C47.4659 101.279 54.7288 101.247 61.738 99.6882C68.7472 98.1291 75.3384 95.0785 81.0632 90.7441C84.1205 88.4292 86.8924 85.7772 89.3299 82.8452C92.8606 78.5983 90.971 72.4483 86.1073 69.8317C81.2436 67.2152 75.2601 69.2163 71.1962 72.9561C70.4922 73.604 69.7562 74.2191 68.9904 74.7989C65.5556 77.3996 61.6009 79.2299 57.3953 80.1654C53.1898 81.1009 48.8321 81.1196 44.6187 80.2202C40.4052 79.3208 36.435 77.5244 32.9779 74.9533C29.5209 72.3822 26.6582 69.0966 24.5846 65.3202C22.511 61.5437 21.2751 57.3648 20.9611 53.068C20.647 48.7711 21.2622 44.457 22.7646 40.4191C23.0996 39.5189 23.4769 38.6371 23.8948 37.7765C26.3073 32.8084 26.5023 26.5021 22.597 22.5969Z" fill="#00FF5F"/>
-          <path id="Ellipse 2" d="M79.1656 79.1654C83.0708 83.0706 89.5044 83.1109 92.5559 78.5076C94.6627 75.3296 96.4051 71.9119 97.7424 68.3178C100.246 61.588 101.272 54.3979 100.748 47.2364C100.225 40.075 98.1651 33.1103 94.7091 26.8161C91.2531 20.5219 86.4819 15.046 80.7202 10.7608C74.9585 6.47562 68.3414 3.4817 61.319 1.98272C54.2967 0.483753 47.0338 0.514896 40.0246 2.07404C33.0154 3.63318 26.4242 6.68374 20.6994 11.0182C17.6421 13.333 14.8702 15.985 12.4326 18.9171C8.90198 23.164 10.7915 29.314 15.6552 31.9305C20.5189 34.547 26.5025 32.546 30.5664 28.8061C31.2704 28.1583 32.0064 27.5432 32.7722 26.9634C36.207 24.3627 40.1617 22.5324 44.3673 21.5969C48.5728 20.6614 52.9305 20.6427 57.1439 21.5421C61.3573 22.4415 65.3276 24.2378 68.7846 26.8089C72.2417 29.3801 75.1044 32.6656 77.178 36.4421C79.2516 40.2186 80.4874 44.3974 80.8015 48.6943C81.1155 52.9912 80.5004 57.3053 78.9979 61.3431C78.663 62.2434 78.2856 63.1252 77.8677 63.9858C75.4552 68.9539 75.2603 75.2602 79.1656 79.1654Z" fill="#00FF5F" fill-opacity="0.38"/>
-          </g>
-        </svg>
+  <nav class="navbar">
+    <router-link to="/home" class="brand">
+      <svg class="brand-logo" width="32" height="32" viewBox="0 0 101 101" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path id="Ellipse 1" d="M22.597 22.5969C18.6918 18.6916 12.2582 18.6514 9.20664 23.2546C7.09989 26.4327 5.35752 29.8504 4.02019 33.4445C1.51609 40.1742 0.490881 47.3644 1.0143 54.5259C1.53773 61.6873 3.5975 68.652 7.05351 74.9462C10.5095 81.2403 15.2807 86.7163 21.0424 91.0014C26.8041 95.2866 33.4212 98.2806 40.4436 99.7795C47.4659 101.279 54.7288 101.247 61.738 99.6882C68.7472 98.1291 75.3384 95.0785 81.0632 90.7441C84.1205 88.4292 86.8924 85.7772 89.3299 82.8452C92.8606 78.5983 90.971 72.4483 86.1073 69.8317C81.2436 67.2152 75.2601 69.2163 71.1962 72.9561C70.4922 73.604 69.7562 74.2191 68.9904 74.7989C65.5556 77.3996 61.6009 79.2299 57.3953 80.1654C53.1898 81.1009 48.8321 81.1196 44.6187 80.2202C40.4052 79.3208 36.435 77.5244 32.9779 74.9533C29.5209 72.3822 26.6582 69.0966 24.5846 65.3202C22.511 61.5437 21.2751 57.3648 20.9611 53.068C20.647 48.7711 21.2622 44.457 22.7646 40.4191C23.0996 39.5189 23.4769 38.6371 23.8948 37.7765C26.3073 32.8084 26.5023 26.5021 22.597 22.5969Z" fill="#9EC5AB"/>
+        <path id="Ellipse 2" d="M79.1656 79.1654C83.0708 83.0706 89.5044 83.1109 92.5559 78.5076C94.6627 75.3296 96.4051 71.9119 97.7424 68.3178C100.246 61.588 101.272 54.3979 100.748 47.2364C100.225 40.075 98.1651 33.1103 94.7091 26.8161C91.2531 20.5219 86.4819 15.046 80.7202 10.7608C74.9585 6.47562 68.3414 3.4817 61.319 1.98272C54.2967 0.483753 47.0338 0.514896 40.0246 2.07404C33.0154 3.63318 26.4242 6.68374 20.6994 11.0182C17.6421 13.333 14.8702 15.985 12.4326 18.9171C8.90198 23.164 10.7915 29.314 15.6552 31.9305C20.5189 34.547 26.5025 32.546 30.5664 28.8061C31.2704 28.1583 32.0064 27.5432 32.7722 26.9634C36.207 24.3627 40.1617 22.5324 44.3673 21.5969C48.5728 20.6614 52.9305 20.6427 57.1439 21.5421C61.3573 22.4415 65.3276 24.2378 68.7846 26.8089C72.2417 29.3801 75.1044 32.6656 77.178 36.4421C79.2516 40.2186 80.4874 44.3974 80.8015 48.6943C81.1155 52.9912 80.5004 57.3053 78.9979 61.3431C78.663 62.2434 78.2856 63.1252 77.8677 63.9858C75.4552 68.9539 75.2603 75.2602 79.1656 79.1654Z" fill="#32746D"/>
+      </svg>
+      <span id="moodify">Moodify</span>
+    </router-link>
 
-        <span id="moodify">Moodify</span>
+    <div class="nav-links">
+      <router-link to="/home" :class="{ active: route.path === '/home' }" class="nav-link">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V21a1 1 0 001 1h5a1 1 0 001-1v-5h2v5a1 1 0 001 1h5a1 1 0 001-1V10.414l.293.293a1 1 0 001.414-1.414l-7-7z"/>
+        </svg>
+        Accueil
       </router-link>
-  
-      <div class="links">
-        <router-link
-          to="/home"
-          :class="{ active: route.path === '/home' }"
-        >
-          Home
-        </router-link>
-        <router-link
-          to="/friends"
-          :class="{ active: route.path === '/friends' }"
-        >
-          Friends
-        </router-link>
-        <button
-          @click="goToProfil"
-          :class="{ active: route.path === '/profil' }"
-        >
-        <svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="currentColor"  class="icon icon-tabler icons-tabler-filled icon-tabler-user"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 2a5 5 0 1 1 -5 5l.005 -.217a5 5 0 0 1 4.995 -4.783z" /><path d="M14 14a5 5 0 0 1 5 5v1a2 2 0 0 1 -2 2h-10a2 2 0 0 1 -2 -2v-1a5 5 0 0 1 5 -5h4z" /></svg>
-        </button>
-      </div>
-    </nav>
-  </template>
-  
-  <script setup>
-  import { useRouter, useRoute } from 'vue-router'
-  const router = useRouter()
-  const route = useRoute()
-  
-  function goToProfil() {
-    router.push('/profil')
-  }
-  </script>
-  
-  <style scoped>
-  .navbar {
-    height: 10vh;
-    background-color: #0e0e0ed1;
-    padding: 1rem 2rem;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-  
-  .logo {
-    display: flex;
-    align-items: center;
-    text-decoration: none;
-    color: white;
-    font-size: 1.2rem;
-    font-weight: bold;
-  }
-  
-  .logo-img {
-    height: 30px;
-    margin-right: 10px;
-    animation: spin 3s linear infinite;
-  }
-  
-  @keyframes spin {
-    0% {
-      transform: rotate(0deg);
-    }
-  
-    100% {
-      transform: rotate(360deg);
-    }
-  }
-  
-  .logo span {
-    color: #00FF5F;
-  }
-  
-  .search-input {
-    padding: 0.5rem;
-    border: none;
-    border-radius: 4px;
-    background-color: #444;
-    color: white;
-    width: 100%;
-    max-width: 500px;
-  }
-  
-  .links {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-  }
-  
-  .links a {
-    color: white;
-    text-decoration: none;
-    transition: color 1ms;
-  }
-  
-  .links a.active {
-    color: #00ff88;
-    font-weight: bold;
-  }
-  
-  .links button {
-    color: white;
-    text-decoration: none;
-    transition: color 1s;
-    border: 2px #00ff88 solid;
-    padding: 0.5rem 1rem;
-    border-radius: 4px;
-    cursor: pointer;
-  }
-  
-  .links button.active {
-    color: #00ff88;
-    font-weight: bold;
-  }
-  </style>
-  
+      <router-link to="/friends" :class="{ active: route.path === '/friends' }" class="nav-link">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zm8 0a3 3 0 11-6 0 3 3 0 016 0zm-4.5 7a4.5 4.5 0 00-9 0v.5A.5.5 0 004 14h10a.5.5 0 00.5-.5V13zm5.5 0a4 4 0 00-3.19 1.578A6.985 6.985 0 0117 19v.5a.5.5 0 00.5.5H21a.5.5 0 00.5-.5v-.5a4.5 4.5 0 00-3.5-4.4V13z"/>
+        </svg>
+        Amis
+      </router-link>
+      <button @click="goToProfil" :class="{ active: route.path === '/profil' }" class="nav-btn">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12 2a5 5 0 1 1 -5 5l.005-.217A5 5 0 0 1 12 2z"/>
+          <path d="M14 14a5 5 0 0 1 5 5v1a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-1a5 5 0 0 1 5-5h4z"/>
+        </svg>
+        Profil
+      </button>
+    </div>
+  </nav>
+</template>
+
+<script setup>
+import { useRouter, useRoute } from 'vue-router'
+const router = useRouter()
+const route = useRoute()
+
+function goToProfil() {
+  router.push('/profil')
+}
+</script>
+
+<style scoped>
+.navbar {
+  height: 64px;
+  background: rgba(1, 15, 6, 0.85);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(158, 197, 171, 0.08);
+  padding: 0 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+}
+
+.brand-logo {
+  animation: spin 8s linear infinite;
+  flex-shrink: 0;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+.brand span {
+  font-size: 1.25rem;
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.nav-link {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: rgba(158, 197, 171, 0.6);
+  text-decoration: none;
+  font-size: 0.9rem;
+  padding: 0.5rem 0.85rem;
+  border-radius: 8px;
+  transition: color 0.2s, background 0.2s;
+}
+.nav-link:hover {
+  color: #9EC5AB;
+  background: rgba(16, 79, 85, 0.3);
+}
+.nav-link.active {
+  color: #9EC5AB;
+  background: rgba(16, 79, 85, 0.4);
+  font-weight: 600;
+}
+
+.nav-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(16, 79, 85, 0.3);
+  border: 1px solid rgba(158, 197, 171, 0.2);
+  color: rgba(158, 197, 171, 0.7);
+  font-size: 0.9rem;
+  padding: 0.5rem 0.85rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.nav-btn:hover, .nav-btn.active {
+  background: rgba(50, 116, 109, 0.4);
+  color: #9EC5AB;
+  border-color: rgba(158, 197, 171, 0.35);
+}
+</style>

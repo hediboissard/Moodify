@@ -1,41 +1,61 @@
 <template>
   <div
-    class="music-player"
+    class="player"
     :class="{ expanded }"
     v-if="track && track.title"
     @click="handleClick"
   >
     <transition name="fade">
-      <img
-        v-show="expanded"
-        :src="track.image"
-        alt="cover"
-        class="big-cover"
-      />
+      <img v-show="expanded" :src="track.image" alt="cover" class="big-cover" />
     </transition>
 
-    <div class="content-wrapper">
+    <div class="player-body">
       <div class="main-row">
+        <!-- Track info -->
         <div class="track-info">
           <img :src="track.image" alt="cover" class="cover" />
-          <div class="text">
+          <div class="track-text">
             <h4>{{ track.title }}</h4>
             <p>{{ track.artist }}</p>
           </div>
         </div>
 
+        <!-- Controls -->
         <div class="controls">
-          <button @click.stop="prevTrack"><svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-chevrons-left"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M11 7l-5 5l5 5" /><path d="M17 7l-5 5l5 5" /></svg></button>
-          <button @click.stop="togglePlay">
-            <svg v-if="isPlaying"  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="currentColor"  class="icon icon-tabler icons-tabler-filled icon-tabler-player-pause"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 4h-2a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h2a2 2 0 0 0 2 -2v-12a2 2 0 0 0 -2 -2z" /><path d="M17 4h-2a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h2a2 2 0 0 0 2 -2v-12a2 2 0 0 0 -2 -2z" /></svg>
-          <svg v-else xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="currentColor"  class="icon icon-tabler icons-tabler-filled icon-tabler-player-play"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M6 4v16a1 1 0 0 0 1.524 .852l13 -8a1 1 0 0 0 0 -1.704l-13 -8a1 1 0 0 0 -1.524 .852z" /></svg>
-        </button>
+          <button @click.stop="prevTrack" class="ctrl-btn" title="Précédent">
+            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M11 7l-5 5 5 5"/><path d="M17 7l-5 5 5 5"/>
+            </svg>
+          </button>
+          <button @click.stop="togglePlay" class="ctrl-btn play-btn" :title="isPlaying ? 'Pause' : 'Lecture'">
+            <svg v-if="isPlaying" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M9 4h-2a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"/>
+              <path d="M17 4h-2a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"/>
+            </svg>
+            <svg v-else xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M6 4v16a1 1 0 0 0 1.524.852l13-8a1 1 0 0 0 0-1.704l-13-8A1 1 0 0 0 6 4z"/>
+            </svg>
+          </button>
+          <button @click.stop="nextTrack" class="ctrl-btn" title="Suivant">
+            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M7 7l5 5-5 5"/><path d="M13 7l5 5-5 5"/>
+            </svg>
+          </button>
+        </div>
 
-          <button @click.stop="nextTrack"><svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-chevrons-right"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M7 7l5 5l-5 5" /><path d="M13 7l5 5l-5 5" /></svg></button>
+        <!-- Volume (mini) -->
+        <div class="volume-mini" v-show="!expanded">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M11 5L6 9H2v6h4l5 4V5z"/>
+            <path d="M15.54 8.46a5 5 0 0 1 0 7.07"/>
+          </svg>
+          <input type="range" min="0" max="1" step="0.01" v-model="volume" @input="updateVolume" @click.stop />
         </div>
       </div>
 
-      <div class="extra-controls" v-show="expanded">
+      <!-- Progress bar (always visible) -->
+      <div class="progress-row" @click.stop>
+        <span class="time">{{ formatTime(currentTime) }}</span>
         <input
           type="range"
           class="progress"
@@ -45,13 +65,16 @@
           v-model="currentTime"
           @input="seek"
         />
-        <div class="volume">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
-       xmlns="http://www.w3.org/2000/svg" stroke="currentColor"
-       stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M11 5L6 9H2v6h4l5 4V5z" />
-          <path d="M15.54 8.46a5 5 0 0 1 0 7.07" />
-          <path d="M19.07 4.93a10 10 0 0 1 0 14.14" />
+        <span class="time">{{ formatTime(duration) }}</span>
+      </div>
+
+      <!-- Expanded extra controls -->
+      <div class="extra-controls" v-show="expanded" @click.stop>
+        <div class="volume-full">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M11 5L6 9H2v6h4l5 4V5z"/>
+            <path d="M15.54 8.46a5 5 0 0 1 0 7.07"/>
+            <path d="M19.07 4.93a10 10 0 0 1 0 14.14"/>
           </svg>
           <input type="range" min="0" max="1" step="0.01" v-model="volume" @input="updateVolume" />
         </div>
@@ -83,11 +106,10 @@ const isPlaying = ref(false)
 const expanded = ref(false)
 const currentTime = ref(0)
 const duration = ref(0)
-const volume = ref(1)
+const volume = ref(0.8)
 
 function handleClick(e) {
-  const clickedButton = e.target.closest('button')
-  if (!clickedButton) {
+  if (!e.target.closest('button') && !e.target.closest('input')) {
     expanded.value = !expanded.value
   }
 }
@@ -98,9 +120,7 @@ function togglePlay() {
     audio.value.pause()
     isPlaying.value = false
   } else {
-    audio.value.play().then(() => {
-      isPlaying.value = true
-    }).catch(() => {})
+    audio.value.play().then(() => { isPlaying.value = true }).catch(() => {})
   }
 }
 
@@ -117,187 +137,230 @@ function onEnded() {
   if (props.onNext) props.onNext()
 }
 
-function prevTrack() {
-  if (props.onPrev) props.onPrev()
-}
+function prevTrack() { if (props.onPrev) props.onPrev() }
+function nextTrack() { if (props.onNext) props.onNext() }
+function updateTime() { if (audio.value) currentTime.value = audio.value.currentTime }
+function seek() { if (audio.value) audio.value.currentTime = currentTime.value }
+function updateVolume() { if (audio.value) audio.value.volume = volume.value }
 
-function nextTrack() {
-  if (props.onNext) props.onNext()
-}
-
-function updateTime() {
-  if (audio.value) currentTime.value = audio.value.currentTime
-}
-
-function seek() {
-  if (audio.value) audio.value.currentTime = currentTime.value
-}
-
-function updateVolume() {
-  if (audio.value) audio.value.volume = volume.value
+function formatTime(s) {
+  if (!s || isNaN(s)) return '0:00'
+  const m = Math.floor(s / 60)
+  const sec = Math.floor(s % 60).toString().padStart(2, '0')
+  return `${m}:${sec}`
 }
 
 watch(() => props.track, () => {
   if (audio.value && props.track?.preview_url) {
     audio.value.load()
-    audio.value.play().catch(err => {
-      console.warn("Lecture bloquée :", err.message)
-    })
+    audio.value.play().catch(() => {})
     isPlaying.value = true
   }
 })
 </script>
 
 <style scoped>
-.music-player {
+.player {
   position: fixed;
   bottom: 0;
   left: 0;
   right: 0;
-  background: #1e1e1e;
-  color: white;
+  background: rgba(1, 15, 6, 0.92);
+  backdrop-filter: blur(20px);
+  border-top: 1px solid rgba(158, 197, 171, 0.12);
+  z-index: 200;
   overflow: hidden;
-  border-top: 1px solid #333;
-  z-index: 999;
-  padding: 1rem 5rem;
-  max-height: 90px;
-  transition: max-height 0.6s ease;
-  display: flex;
-  flex-direction: column;
+  max-height: 88px;
+  transition: max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1);
   cursor: pointer;
 }
 
-.music-player.expanded {
+.player.expanded {
   max-height: 90vh;
+  cursor: default;
 }
 
-.content-wrapper {
-  transition: padding 0.6s ease;
-  padding-top: 0;
+.big-cover {
+  width: 220px;
+  height: 220px;
+  object-fit: cover;
+  border-radius: 16px;
+  margin: 1.5rem auto 1rem;
+  display: block;
+  box-shadow: 0 16px 40px rgba(0,0,0,0.5);
+  animation: popIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes popIn {
+  from { opacity: 0; transform: scale(0.9); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+.player-body {
+  padding: 0 2rem;
   display: flex;
   flex-direction: column;
 }
 
-.music-player.expanded .content-wrapper {
-  padding-top: 4rem;
-}
-
-.big-cover {
-  width: 300px;
-  height: 300px;
-  object-fit: cover;
-  border-radius: 20px;
-  margin: 0 auto 1rem;
-  animation: fadeIn 0.4s ease;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: scale(0.95); }
-  to { opacity: 1; transform: scale(1); }
-}
+.player.expanded .player-body { padding-top: 1rem; }
 
 .main-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  height: 72px;
 }
 
-.music-player.expanded .main-row {
+.player.expanded .main-row {
   flex-direction: column;
-  text-align: center;
+  height: auto;
+  padding: 0.5rem 0;
   gap: 1rem;
+  text-align: center;
 }
 
 .track-info {
   display: flex;
   align-items: center;
+  gap: 12px;
+  min-width: 200px;
+}
+
+.player.expanded .track-info {
+  flex-direction: column;
+  min-width: unset;
 }
 
 .cover {
-  width: 50px;
-  height: 50px;
+  width: 48px;
+  height: 48px;
   object-fit: cover;
   border-radius: 8px;
-  margin-right: 1rem;
+  flex-shrink: 0;
 }
 
-.music-player.expanded .cover {
-  display: none;
-}
+.player.expanded .cover { display: none; }
 
-.text h4 {
+.track-text h4 {
   margin: 0;
-  font-size: 1rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #F0F7F2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 200px;
 }
 
-.text p {
-  margin: 0;
-  font-size: 0.85rem;
-  color: #bbb;
+.track-text p {
+  margin: 2px 0 0;
+  font-size: 0.8rem;
+  color: rgba(158, 197, 171, 0.6);
 }
 
 .controls {
   display: flex;
-  justify-content: center;
-  margin-top: 0.5rem;
+  align-items: center;
+  gap: 4px;
 }
 
-.controls button {
+.ctrl-btn {
   background: none;
   border: none;
-  color: white;
-  font-size: 1.8rem;
+  color: rgba(158, 197, 171, 0.7);
+  padding: 8px;
+  border-radius: 50%;
   cursor: pointer;
-  margin: 0 10px;
-  transition: transform 0.2s;
-}
-
-.controls button:hover {
-  transform: scale(1.2);
-}
-
-.extra-controls {
-  width: 100%;
   display: flex;
-  justify-content: space-between;
-  gap: 2rem;
-  margin-top: 1rem;
   align-items: center;
+  justify-content: center;
+  transition: color 0.2s, background 0.2s;
+}
+.ctrl-btn:hover {
+  color: #9EC5AB;
+  background: rgba(16, 79, 85, 0.3);
+}
+.play-btn {
+  width: 44px;
+  height: 44px;
+  background: #104F55;
+  color: #9EC5AB;
+  border-radius: 50%;
+}
+.play-btn:hover {
+  background: #32746D;
+  color: #F0F7F2;
+}
+
+.volume-mini {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: rgba(158, 197, 171, 0.5);
+  min-width: 140px;
+  justify-content: flex-end;
+}
+
+.volume-mini input {
+  width: 80px;
+}
+
+.progress-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-bottom: 0.6rem;
+}
+
+.player.expanded .progress-row {
+  padding: 0.25rem 0 0.75rem;
+}
+
+.time {
+  font-size: 0.72rem;
+  color: rgba(158, 197, 171, 0.45);
+  width: 32px;
+  text-align: center;
+  flex-shrink: 0;
 }
 
 .progress {
   flex: 1;
-  height: 5px;
-  background: #555;
+  height: 4px;
+  background: rgba(158, 197, 171, 0.15);
   appearance: none;
-  border-radius: 5px;
-}
-
-.progress::-webkit-slider-thumb {
-  appearance: none;
-  width: 14px;
-  height: 14px;
-  border-radius: 50%;
-  background: white;
+  border-radius: 4px;
   cursor: pointer;
 }
+.progress::-webkit-slider-thumb {
+  appearance: none;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #9EC5AB;
+  cursor: pointer;
+  transition: transform 0.15s;
+}
+.progress::-webkit-slider-thumb:hover {
+  transform: scale(1.3);
+}
 
-.volume {
+.extra-controls { padding-bottom: 1rem; }
+
+.volume-full {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 10px;
+  color: rgba(158, 197, 171, 0.5);
+  max-width: 240px;
+  margin: 0 auto;
+}
+.volume-full input { flex: 1; }
+
+input[type="range"] {
+  accent-color: #32746D;
 }
 
-.volume input {
-  width: 100px;
-}
-
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity 0.3s ease;
-}
-.fade-enter-from,
-.fade-leave-to {
-  opacity: 0;
-}
+.fade-enter-active, .fade-leave-active { transition: opacity 0.3s ease; }
+.fade-enter-from, .fade-leave-to       { opacity: 0; }
 </style>
